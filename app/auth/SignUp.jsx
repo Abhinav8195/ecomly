@@ -59,11 +59,10 @@ const SignUp = () => {
   Toast.show({
     type: "success",
     text1: "Account Created 🎉",
-    text2: "Redirecting to Sign In screen...",
   });
 
   setTimeout(() => {
-    router.replace("/signin"); 
+    router.push("/auth/PhoneVerification"); 
   }, 1200);
 };
 
