@@ -25,7 +25,7 @@ const ProductDetails = () => {
   const isDark = colorScheme === "dark";
   const router = useRouter();
   const wishlist = useSelector((state) => state.wishlist.wishlist);
-  console.log('wishlist productdetails',wishlist)
+  // console.log('wishlist productdetails',wishlist)
   const cart = useSelector((state) => state.cart.cart);
   const dispatch = useDispatch();
 

@@ -30,7 +30,7 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
 
 
 
- console.log('wishlist popolarproducts',wishlist)
+//  console.log('wishlist popolarproducts',wishlist)
 
  const handleAddToCart = (item) => {
    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -164,34 +164,68 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
 
                     {/* Cart + quantity */}
                     <View>
+                      
+
                       {cart.some((x) => x.id === item.id) ? (
-                        <View style={styles.quantityContainer}>
-                          <TouchableOpacity
-                            onPress={() => dispatch(decrementQuantity(item))}
-                            style={[styles.qtyButton, { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" }]}
-                          >
-                            <Ionicons name="remove" size={14} color={isDark ? "white" : colors.primary} />
-                          </TouchableOpacity>
+    <MotiView
+      key="quantity"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+      style={styles.quantityContainer}
+    >
+      <TouchableOpacity
+        onPress={() => dispatch(decrementQuantity(item))}
+        style={[
+          styles.qtyButton,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+        ]}
+      >
+        <Ionicons name="remove" size={14} color={isDark?'white':colors.primary} />
+      </TouchableOpacity>
 
-                          <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
-                            {cart.find((x) => x.id === item.id)?.quantity}
-                          </Text>
+      <MotiView
+        from={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 200 }}
+      >
+        <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
+          {cart.find((x) => x.id === item.id)?.quantity}
+        </Text>
+      </MotiView>
 
-                          <TouchableOpacity
-                            onPress={() => dispatch(incrementQuantity(item))}
-                            style={[styles.qtyButton, { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" }]}
-                          >
-                            <Ionicons name="add" size={14} color={isDark ? "white" : colors.primary} />
-                          </TouchableOpacity>
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => handleAddToCart(item)}
-                          style={[styles.cartIcon, { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" }]}
-                        >
-                          <Ionicons name="cart-outline" size={16} color={isDark ? colors.dark.textPrimary : colors.primary} />
-                        </TouchableOpacity>
-                      )}
+      <TouchableOpacity
+        onPress={() => dispatch(incrementQuantity(item))}
+        style={[
+          styles.qtyButton,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+        ]}
+      >
+        <Ionicons name="add" size={14} color={ isDark?'white':colors.primary} />
+      </TouchableOpacity>
+    </MotiView>
+  ) : (
+    <MotiView
+      key="cart"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+    >
+      <TouchableOpacity
+        onPress={() => handleAddToCart(item)}
+        style={[
+          styles.cartIcon,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
+        ]}
+      >
+        <Ionicons
+          name="cart-outline"
+          size={16}
+          color={isDark ? colors.dark.textPrimary : colors.primary}
+        />
+      </TouchableOpacity>
+    </MotiView>
+  )}
                     </View>
                   </View>
                 </View>
