@@ -9,6 +9,7 @@ import { useFonts } from "expo-font";
 import { Provider, useDispatch } from 'react-redux';
 import  store  from '../store';
 import { loadCartFromStorage } from "../redux/CartReducer";
+import { loadWishlistFromStorage } from "../redux/WishListReducer";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +18,7 @@ const AppInitializer = ({ children }) => {
 
   useEffect(() => {
     dispatch(loadCartFromStorage());
+    dispatch(loadWishlistFromStorage());
   }, []);
 
   return children;

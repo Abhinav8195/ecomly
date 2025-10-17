@@ -16,17 +16,22 @@ import products from "../data";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart,incrementQuantity,decrementQuantity } from "../redux/CartReducer";
 import Toast from "react-native-toast-message";
+import { addToWishlist, removeFromWishlist } from "../redux/WishListReducer";
 import * as Haptics from "expo-haptics";
 
 const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const theme = isDark ? colors.dark : colors.light;
-   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const cart = useSelector((state) => state.cart.cart);
+  
 
-  // console.log(cart)
+
+
+ console.log('wishlist popolarproducts',wishlist)
+
  const handleAddToCart = (item) => {
    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   dispatch(addToCart(item));
@@ -35,6 +40,28 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
     text1: `${item.name} added to cart!`,
   });
 };
+ const toggleWishlist = (item) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+     const isLiked = wishlist.some(
+      (i) => String(i.id) === String(item.id) // ✅ FIXED TYPE MATCHING HERE
+    );
+
+
+    if (isLiked) {
+      dispatch(removeFromWishlist(item));
+      Toast.show({
+        type: "info",
+        text1: `${item.name} removed from wishlist`,
+      });
+    } else {
+     dispatch(addToWishlist({ ...item, id: String(item.id) }));
+      Toast.show({
+        type: "success",
+        text1: `${item.name} added to wishlist`,
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -63,162 +90,116 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
       </View>
 
       {/* Horizontal ScrollView */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        {products.map((item, index) => (
-          <MotiView
-            key={item.id}
-            from={{ opacity: 0, translateY: 25 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{
-              type: "timing",
-              duration: 500,
-              delay: index * 150,
-            }}
-          >
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[
-                styles.card,
-                {
-                  backgroundColor: isDark ? colors.dark.card : "#fff",
-                  borderColor: isDark ? "#2D2C38" : "#ddd",
-                },
-              ]}
-              onPress={() =>
-    router.push({
-      pathname: "/ProductDetails",
-      params: {
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        rating: item.rating,
-        description: item.description,
-        colors: JSON.stringify(item.colors), 
-        sizes: JSON.stringify(item.sizes),
-        reviews: item.reviews,
-        imageKey: item.id,
-        description:item.description,
-        shop:item.shop
-      },
-    })
-  }
+       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
+        {products.map((item, index) => {
+          const isLiked = wishlist.some(
+            (i) => String(i.id) === String(item.id) 
+          );
+
+
+          return (
+            <MotiView
+              key={item.id}
+              from={{ opacity: 0, translateY: 25 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: "timing", duration: 500, delay: index * 150 }}
             >
-              <View style={styles.imageWrapper}>
-                <Image source={item.image} style={styles.productImage} />
-                <TouchableOpacity style={styles.heartIcon}>
-                  <Ionicons name="heart-outline" size={18} color={colors.warning} />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.info}>
-                <Text
-                  style={[
-                    styles.productName,
-                    { color: theme.textPrimary },
-                  ]}
-                >
-                  {item.name}
-                </Text>
-                <Text
-                  style={[
-                    styles.productPrice,
-                    { color: colors.primary },
-                  ]}
-                >
-                  {item.price}
-                </Text>
-
-                {/* Color Dots */}
-                <View style={styles.colorsRow}>
-                  {item.colors.map((clr, i) => (
-                    <View key={i} style={[styles.dot, { backgroundColor: clr }]} />
-                  ))}
+              <TouchableOpacity
+                activeOpacity={0.9}
+                style={[
+                  styles.card,
+                  { backgroundColor: isDark ? colors.dark.card : "#fff", borderColor: isDark ? "#2D2C38" : "#ddd" },
+                ]}
+                onPress={() =>
+                  router.push({
+                    pathname: "/ProductDetails",
+                    params: {
+                      id: String(item.id),
+                      name: item.name,
+                      price: item.price,
+                      rating: item.rating,
+                      description: item.description,
+                      colors: JSON.stringify(item.colors),
+                      sizes: JSON.stringify(item.sizes),
+                      reviews: item.reviews,
+                      imageKey: item.id,
+                      description: item.description,
+                      shop: item.shop,
+                    },
+                  })
+                }
+              >
+                <View style={styles.imageWrapper}>
+                  <Image source={item.image} style={styles.productImage} />
+                  <TouchableOpacity style={styles.heartIcon} onPress={() => toggleWishlist(item)}>
+                    <MotiView
+                      animate={{ scale: isLiked ? 1.2 : 1 }}
+                      transition={{ type: "spring", damping: 10, stiffness: 150 }}
+                    >
+                      <Ionicons
+                        name={isLiked ? "heart" : "heart-outline"}
+                        size={18}
+                        color={isLiked ? "#F76C31" : colors.warning}
+                      />
+                    </MotiView>
+                  </TouchableOpacity>
                 </View>
 
-                {/* Rating + Cart */}
-                <View style={styles.ratingRow}>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Ionicons name="star" size={14} color="#FFC107" />
-                  <Text style={[styles.ratingText, {color:isDark?'#fff':'#000'}]}>{item.rating}</Text>
+                <View style={styles.info}>
+                  <Text style={[styles.productName, { color: theme.textPrimary }]}>{item.name}</Text>
+                  <Text style={[styles.productPrice, { color: colors.primary }]}>{item.price}</Text>
+
+                  {/* Color Dots */}
+                  <View style={styles.colorsRow}>
+                    {item.colors.map((clr, i) => (
+                      <View key={i} style={[styles.dot, { backgroundColor: clr }]} />
+                    ))}
                   </View>
-                 <MotiView
-  from={{ opacity: 0, scale: 0.8 }}
-  animate={{ opacity: 1, scale: 1 }}
-  exit={{ opacity: 0, scale: 0.8 }}
-  transition={{ type: "timing", duration: 200 }}
-    
->
-  {cart.some((x) => x.id === item.id) ? (
-    <MotiView
-      key="quantity"
-      from={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "timing", duration: 200 }}
-      style={styles.quantityContainer}
-    >
-      <TouchableOpacity
-        onPress={() => dispatch(decrementQuantity(item))}
-        style={[
-          styles.qtyButton,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
-        ]}
-      >
-        <Ionicons name="remove" size={14} color={isDark?'white':colors.primary} />
-      </TouchableOpacity>
 
-      <MotiView
-        from={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200 }}
-      >
-        <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
-          {cart.find((x) => x.id === item.id)?.quantity}
-        </Text>
-      </MotiView>
+                  {/* Rating + Cart */}
+                  <View style={styles.ratingRow}>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Ionicons name="star" size={14} color="#FFC107" />
+                      <Text style={[styles.ratingText, { color: isDark ? "#fff" : "#000" }]}>{item.rating}</Text>
+                    </View>
 
-      <TouchableOpacity
-        onPress={() => dispatch(incrementQuantity(item))}
-        style={[
-          styles.qtyButton,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
-        ]}
-      >
-        <Ionicons name="add" size={14} color={ isDark?'white':colors.primary} />
-      </TouchableOpacity>
-    </MotiView>
-  ) : (
-    <MotiView
-      key="cart"
-      from={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "timing", duration: 200 }}
-    >
-      <TouchableOpacity
-        onPress={() => handleAddToCart(item)}
-        style={[
-          styles.cartIcon,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
-        ]}
-      >
-        <Ionicons
-          name="cart-outline"
-          size={16}
-          color={isDark ? colors.dark.textPrimary : colors.primary}
-        />
-      </TouchableOpacity>
-    </MotiView>
-  )}
-</MotiView>
+                    {/* Cart + quantity */}
+                    <View>
+                      {cart.some((x) => x.id === item.id) ? (
+                        <View style={styles.quantityContainer}>
+                          <TouchableOpacity
+                            onPress={() => dispatch(decrementQuantity(item))}
+                            style={[styles.qtyButton, { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" }]}
+                          >
+                            <Ionicons name="remove" size={14} color={isDark ? "white" : colors.primary} />
+                          </TouchableOpacity>
 
+                          <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
+                            {cart.find((x) => x.id === item.id)?.quantity}
+                          </Text>
+
+                          <TouchableOpacity
+                            onPress={() => dispatch(incrementQuantity(item))}
+                            style={[styles.qtyButton, { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" }]}
+                          >
+                            <Ionicons name="add" size={14} color={isDark ? "white" : colors.primary} />
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => handleAddToCart(item)}
+                          style={[styles.cartIcon, { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" }]}
+                        >
+                          <Ionicons name="cart-outline" size={16} color={isDark ? colors.dark.textPrimary : colors.primary} />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </MotiView>
-        ))}
+              </TouchableOpacity>
+            </MotiView>
+          );
+        })}
       </ScrollView>
     </View>
   );

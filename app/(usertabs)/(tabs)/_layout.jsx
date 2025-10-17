@@ -25,6 +25,8 @@ function CustomTabBar({ state, navigation }) {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? colors.dark : colors.light;
   const cart = useSelector((state) => state.cart.cart);
+   const wishlist = useSelector((state) => state.wishlist.wishlist);
+   const wishlistLength = wishlist.length;
   const cartLength = cart.length;
 
   const icons = {
@@ -50,7 +52,7 @@ function CustomTabBar({ state, navigation }) {
           const isFocused = state.index === index;
           const onPress = () => navigation.navigate(route.name);
           const isCart = route.name === "Cart";
-
+          const isWishlist = route.name === "Wishlist";
           return (
             <TouchableOpacity
               key={route.name}
@@ -98,6 +100,8 @@ function CustomTabBar({ state, navigation }) {
                     </Text>
                   </View>
                 )}
+
+                
 
                 <Ionicons
                   name={icons[route.name]}

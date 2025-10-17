@@ -16,12 +16,18 @@ import * as Haptics from "expo-haptics";
 import QuantitySelector from "../components/QuantitySelector ";
 import ReviewSection from "../components/ReviewSection";
 import RelatedProducts from "../components/RelatedProducts";
+import { useDispatch, useSelector } from "react-redux";
+import { addToWishlist, removeFromWishlist } from "../redux/WishListReducer";
+import Toast from "react-native-toast-message";
 
 const ProductDetails = () => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [liked, setLiked] = useState(false);
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  console.log('wishlist productdetails',wishlist)
+  const cart = useSelector((state) => state.cart.cart);
+  const dispatch = useDispatch();
 
   const productImages = {
     1: require("../assets/product/tshirt.png"),
@@ -43,6 +49,32 @@ const ProductDetails = () => {
   const textColor = isDark ? "#FFF" : "#111";
   const subText = isDark ? "#BBB" : "#555";
 
+ const item = {
+  id: params.id,
+  name: params.name,
+  price: params.price,
+  rating: params.rating,
+  description: params.description,
+  colors: colorsArray,
+  sizes: sizesArray,
+  reviews: params.reviews,
+  imageKey: params.id,
+  shop: params.shop,
+};
+
+
+const toggleWishlist = () => {
+  const liked = wishlist.some((i) => i.id === item.id);
+
+  if (liked) {
+    dispatch(removeFromWishlist(item));
+    Toast.show({ type: "info", text1: `${item.name} removed from wishlist` });
+  } else {
+    dispatch(addToWishlist(item));
+    Toast.show({ type: "success", text1: `${item.name} added to wishlist` });
+  }
+};
+
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}>
@@ -52,14 +84,51 @@ const ProductDetails = () => {
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: textColor }]}>Details</Text>
           <View style={styles.headerIcons}>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => { setLiked(!liked); Haptics.selectionAsync(); }}>
-              <MotiView animate={{ scale: liked ? 1.2 : 1 }} transition={{ type: "spring", damping: 10, stiffness: 150 }}>
-                <Ionicons name={liked ? "heart" : "heart-outline"} size={24} color={liked ? "#F76C31" : textColor} style={{ marginRight: 12 }} />
-              </MotiView>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(usertabs)/(tabs)/Cart')}>
-              <Ionicons name="cart-outline" size={24} color={textColor} />
-            </TouchableOpacity>
+                 <TouchableOpacity activeOpacity={0.8} onPress={toggleWishlist}>
+  <MotiView
+     animate={{ scale: wishlist.some((i) => i.id === item.id) ? 1.2 : 1 }}
+    transition={{ type: "spring", damping: 10, stiffness: 150 }}
+    style={{ position: "relative" }}
+  >
+    <Ionicons
+      name={wishlist.some((i) => i.id === item.id) ? "heart" : "heart-outline"}
+      size={24}
+      color={wishlist.some((i) => i.id === item.id) ? "#F76C31" : textColor}
+      style={{ marginRight: 12 }}
+    />
+  </MotiView>
+</TouchableOpacity>
+
+             <TouchableOpacity onPress={() => router.push('/(usertabs)/(tabs)/Cart')}>
+    <View style={{ position: "relative" }}>
+      <Ionicons name="cart-outline" size={24} color={textColor} />
+
+      {/* Cart Badge */}
+      {cart.length > 0 && (
+        <MotiView
+          from={{ scale: 1, opacity: 0.8 }}
+          animate={{ scale: [1, 1.3, 1], opacity: [0.8, 1, 0.8] }}
+          transition={{ loop: true, type: "timing", duration: 800 }}
+          style={{
+            position: "absolute",
+            top: -4,
+            right: -4,
+            backgroundColor: isDark?colors.dark.textSecondary:colors.primary,
+            minWidth: 16,
+            height: 16,
+            borderRadius: 8,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 3,
+          }}
+        >
+          <Text style={{ color: "#fff", fontSize: 12, fontWeight: "bold" }}>
+            {cart.length > 9 ? "9+" : cart.length}
+          </Text>
+        </MotiView>
+      )}
+    </View>
+  </TouchableOpacity>
           </View>
         </MotiView>
 

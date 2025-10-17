@@ -15,7 +15,7 @@ export const loadCartFromStorage = createAsyncThunk(
   }
 );
 
-// ✅ Helper to save to AsyncStorage
+
 const saveCartToStorage = async (cart) => {
   try {
     await AsyncStorage.setItem("cartItems", JSON.stringify(cart));
@@ -37,7 +37,7 @@ export const CartSlice = createSlice({
       } else {
         state.cart.push({ ...action.payload, quantity: 1 });
       }
-      saveCartToStorage(state.cart); // ✅ save after change
+      saveCartToStorage(state.cart); 
     },
 
     removeFromCart: (state, action) => {
