@@ -18,6 +18,7 @@ import OfferCard from "../../../components/OfferCard";
 import OfferCarousel from "../../../components/OfferCard";
 import CategoriesCarousel from "../../../components/CategoriesCarousel";
 import PopularProduct from "../../../components/PopularProduct";
+import NewArrival from "../../../components/NewArrival";
 
 const Home = () => {
   const colorScheme = useColorScheme();
@@ -28,6 +29,7 @@ const Home = () => {
     <ScrollView
       style={[styles.container, { backgroundColor: isDark ? colors.dark.background : colors.light.background }]}
       showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 90 }}
     >
       <View style={[styles.header]}>
         <MotiView from={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 12, stiffness: 130 }}>
@@ -57,6 +59,7 @@ const Home = () => {
 <CategoriesCarousel />
 
 <PopularProduct/>
+<NewArrival/>
 
     </ScrollView>
   );

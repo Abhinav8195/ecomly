@@ -36,6 +36,10 @@ const Cart = () => {
     2: require("../../../assets/product/shoes.png"),
     3: require("../../../assets/product/cargo.png"),
     4: require("../../../assets/product/hoodie.png"),
+    5: require("../../../assets/product/i5.png"),
+    6: require("../../../assets/product/i6.png"),
+    7: require("../../../assets/product/i7.png"),
+    8: require("../../../assets/product/i8.png"),
   };
 
   const [selectedItems, setSelectedItems] = useState(
