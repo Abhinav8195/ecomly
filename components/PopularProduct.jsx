@@ -185,7 +185,7 @@ const existingCartItem = cart.find(
                       <Text style={[styles.ratingText, { color: isDark ? "#fff" : "#000" }]}>{item.rating}</Text>
                     </View>
 
-                    {/* Cart + quantity */}
+                    {/* Cart + quantity */}                    
                      <View>
                       {existingCartItem ? (
                         <MotiView
