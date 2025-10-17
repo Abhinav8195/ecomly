@@ -3,11 +3,24 @@ import { LogBox, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useFonts } from "expo-font";
+import { Provider, useDispatch } from 'react-redux';
+import  store  from '../store';
+import { loadCartFromStorage } from "../redux/CartReducer";
 
 SplashScreen.preventAutoHideAsync();
+
+const AppInitializer = ({ children }) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadCartFromStorage());
+  }, []);
+
+  return children;
+};
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -44,6 +57,9 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+     
+        <Provider store={store}>
+          <AppInitializer>
       <SafeAreaView
         style={{
           flex: 1,
@@ -57,6 +73,9 @@ export default function RootLayout() {
         </Stack>
         <Toast />
       </SafeAreaView>
+      </AppInitializer>
+      </Provider>
+   
     </GestureHandlerRootView>
   );
 }

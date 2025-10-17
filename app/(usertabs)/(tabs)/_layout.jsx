@@ -1,9 +1,10 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { View, TouchableOpacity, StyleSheet, Platform, useColorScheme } from "react-native";
+import { View, TouchableOpacity, StyleSheet, Platform, useColorScheme, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
 import colors from "../../../theme/colors";
+import { useSelector } from "react-redux";
 
 export default function TabLayout() {
   return (
@@ -21,8 +22,11 @@ export default function TabLayout() {
 }
 
 function CustomTabBar({ state, navigation }) {
-    const scheme = useColorScheme();
-      const theme = scheme === "dark" ? colors.dark : colors.light;
+  const scheme = useColorScheme();
+  const theme = scheme === "dark" ? colors.dark : colors.light;
+  const cart = useSelector((state) => state.cart.cart);
+  const cartLength = cart.length;
+
   const icons = {
     Home: "home-outline",
     Explore: "compass-outline",
@@ -36,7 +40,10 @@ function CustomTabBar({ state, navigation }) {
       <View
         style={[
           styles.tabContainer,
-          { backgroundColor: scheme === "dark" ? colors.dark.card : colors.light.background },
+          {
+            backgroundColor:
+              scheme === "dark" ? colors.dark.card : colors.light.background,
+          },
         ]}
       >
         {state.routes.map((route, index) => {
@@ -63,7 +70,6 @@ function CustomTabBar({ state, navigation }) {
                 }}
                 style={{ alignItems: "center", justifyContent: "center" }}
               >
-               
                 <AnimatePresence>
                   {isCart && isFocused && (
                     <MotiView
@@ -71,26 +77,37 @@ function CustomTabBar({ state, navigation }) {
                       animate={{ opacity: 0.99, scale: 1 }}
                       exit={{ opacity: 0, scale: 0 }}
                       transition={{ type: "timing", duration: 300 }}
-                     style={[
+                      style={[
                         styles.glowCircle,
                         {
                           backgroundColor:
-                            scheme === "dark" ? colors.primary : colors.primary,
+                            scheme === "dark"
+                              ? colors.primary
+                              : colors.primary,
                         },
                       ]}
                     />
                   )}
                 </AnimatePresence>
 
+                {/* 🛒 Cart Badge */}
+                {isCart && cartLength > 0 && (
+                  <View style={styles.badgeContainer}>
+                    <Text style={styles.badgeText}>
+                      {cartLength > 9 ? "9+" : cartLength}
+                    </Text>
+                  </View>
+                )}
+
                 <Ionicons
                   name={icons[route.name]}
                   size={26}
-                   color={
+                  color={
                     isCart && isFocused
-                      ? "#fff" 
+                      ? "#fff"
                       : isFocused
-                      ? "#6C5CE7" 
-                      : "#A0A0A0" 
+                      ? "#6C5CE7"
+                      : "#A0A0A0"
                   }
                 />
               </MotiView>
@@ -135,5 +152,23 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     backgroundColor: "#6C5CE7",
+  },
+  badgeContainer: {
+    position: "absolute",
+    top: -4,
+    right: -6,
+    backgroundColor: "red",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  badgeText: {
+    color: "white",
+    fontSize: 11,
+    fontWeight: "bold",
   },
 });

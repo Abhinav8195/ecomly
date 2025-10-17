@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,11 +13,28 @@ import { MotiView } from "moti";
 import colors from "../theme/colors";
 import { router } from "expo-router";
 import products from "../data";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart,incrementQuantity,decrementQuantity } from "../redux/CartReducer";
+import Toast from "react-native-toast-message";
+import * as Haptics from "expo-haptics";
 
 const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const theme = isDark ? colors.dark : colors.light;
+   const dispatch = useDispatch();
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const cart = useSelector((state) => state.cart.cart);
+
+  // console.log(cart)
+ const handleAddToCart = (item) => {
+   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  dispatch(addToCart(item));
+  Toast.show({
+    type: "success",
+    text1: `${item.name} added to cart!`,
+  });
+};
 
   return (
     <View style={styles.container}>
@@ -124,11 +141,79 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
 
                 {/* Rating + Cart */}
                 <View style={styles.ratingRow}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Ionicons name="star" size={14} color="#FFC107" />
                   <Text style={[styles.ratingText, {color:isDark?'#fff':'#000'}]}>{item.rating}</Text>
-                  <TouchableOpacity style={[styles.cartIcon,{backgroundColor:isDark?colors.dark.textSecondary:'#F1EEFF'}]}>
-                    <Ionicons name="cart-outline" size={16} color={isDark?colors.dark.textPrimary:colors.primary} />
-                  </TouchableOpacity>
+                  </View>
+                 <MotiView
+  from={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  exit={{ opacity: 0, scale: 0.8 }}
+  transition={{ type: "timing", duration: 200 }}
+    
+>
+  {cart.some((x) => x.id === item.id) ? (
+    <MotiView
+      key="quantity"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+      style={styles.quantityContainer}
+    >
+      <TouchableOpacity
+        onPress={() => dispatch(decrementQuantity(item))}
+        style={[
+          styles.qtyButton,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+        ]}
+      >
+        <Ionicons name="remove" size={14} color={isDark?'white':colors.primary} />
+      </TouchableOpacity>
+
+      <MotiView
+        from={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 200 }}
+      >
+        <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
+          {cart.find((x) => x.id === item.id)?.quantity}
+        </Text>
+      </MotiView>
+
+      <TouchableOpacity
+        onPress={() => dispatch(incrementQuantity(item))}
+        style={[
+          styles.qtyButton,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+        ]}
+      >
+        <Ionicons name="add" size={14} color={ isDark?'white':colors.primary} />
+      </TouchableOpacity>
+    </MotiView>
+  ) : (
+    <MotiView
+      key="cart"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+    >
+      <TouchableOpacity
+        onPress={() => handleAddToCart(item)}
+        style={[
+          styles.cartIcon,
+          { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
+        ]}
+      >
+        <Ionicons
+          name="cart-outline"
+          size={16}
+          color={isDark ? colors.dark.textPrimary : colors.primary}
+        />
+      </TouchableOpacity>
+    </MotiView>
+  )}
+</MotiView>
+
                 </View>
               </View>
             </TouchableOpacity>
@@ -216,6 +301,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 8,
+    justifyContent: "space-between",
   },
   ratingText: {
     fontSize: 13,
@@ -226,5 +312,24 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     padding: 6,
     borderRadius: 8,
-  },
+  },quantityContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginLeft: "auto",
+  minWidth: 90, 
+  justifyContent: "space-between",
+},
+qtyButton: {
+  paddingHorizontal: 6,
+  paddingVertical: 4,
+  borderRadius: 6,
+  marginHorizontal: 4,
+},
+qtyText: {
+  fontSize: 14,
+  fontWeight: "600",
+  minWidth: 20,
+  textAlign: "center",
+},
+
 });
