@@ -41,27 +41,26 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
   });
 };
  const toggleWishlist = (item) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-     const isLiked = wishlist.some(
-      (i) => String(i.id) === String(item.id) // ✅ FIXED TYPE MATCHING HERE
-    );
+  const normalizedItem = { ...item, id: String(item.id) };
+  const isLiked = wishlist.some((i) => i.id === normalizedItem.id);
 
+  if (isLiked) {
+    dispatch(removeFromWishlist(normalizedItem));
+    Toast.show({
+      type: "info",
+      text1: `${item.name} removed from wishlist`,
+    });
+  } else {
+    dispatch(addToWishlist(normalizedItem));
+    Toast.show({
+      type: "success",
+      text1: `${item.name} added to wishlist`,
+    });
+  }
+};
 
-    if (isLiked) {
-      dispatch(removeFromWishlist(item));
-      Toast.show({
-        type: "info",
-        text1: `${item.name} removed from wishlist`,
-      });
-    } else {
-     dispatch(addToWishlist({ ...item, id: String(item.id) }));
-      Toast.show({
-        type: "success",
-        text1: `${item.name} added to wishlist`,
-      });
-    }
-  };
 
   return (
     <View style={styles.container}>
