@@ -1,4 +1,4 @@
-const products = [
+const productsData = [
   {
     id: 1,
     name: "Splice T-Shirts",
@@ -53,4 +53,4 @@ const products = [
   },
 ];
 
-export default products;
+export default productsData;

@@ -31,39 +31,66 @@ export const CartSlice = createSlice({
   },
   reducers: {
     addToCart: (state, action) => {
-      const itemPresent = state.cart.find((item) => item.id === action.payload.id);
-      if (itemPresent) {
-        itemPresent.quantity++;
-      } else {
-        state.cart.push({ ...action.payload, quantity: 1 });
-      }
-      saveCartToStorage(state.cart); 
-    },
+  const { id, selectedColor, selectedSize, quantity } = action.payload;
+
+  const itemPresent = state.cart.find(
+    (item) =>
+      item.id === id &&
+      item.selectedColor === selectedColor &&
+      item.selectedSize === selectedSize
+  );
+
+  if (itemPresent) {
+    itemPresent.quantity += Number(quantity); 
+  } else {
+    state.cart.push({ ...action.payload }); 
+  }
+
+  saveCartToStorage(state.cart);
+},
+
 
     removeFromCart: (state, action) => {
-      state.cart = state.cart.filter((item) => item.id !== action.payload.id);
-      saveCartToStorage(state.cart);
-    },
+  const { id, selectedColor, selectedSize } = action.payload;
+  state.cart = state.cart.filter(
+    (item) =>
+      !(item.id === id &&
+        item.selectedColor === selectedColor &&
+        item.selectedSize === selectedSize)
+  );
+  saveCartToStorage(state.cart);
+},
 
     incrementQuantity: (state, action) => {
-      const item = state.cart.find((item) => item.id === action.payload.id);
-      if (item) {
-        item.quantity++;
-      }
-      saveCartToStorage(state.cart);
-    },
+  const item = state.cart.find(
+    (i) =>
+      i.id === action.payload.id &&
+      i.selectedColor === action.payload.selectedColor &&
+      i.selectedSize === action.payload.selectedSize
+  );
+  if (item) item.quantity++;
+  saveCartToStorage(state.cart);
+},
 
-    decrementQuantity: (state, action) => {
-      const itemPresent = state.cart.find((item) => item.id === action.payload.id);
-      if (itemPresent) {
-        if (itemPresent.quantity === 1) {
-          state.cart = state.cart.filter((item) => item.id !== action.payload.id);
-        } else {
-          itemPresent.quantity--;
-        }
-      }
-      saveCartToStorage(state.cart);
-    },
+decrementQuantity: (state, action) => {
+  const itemIndex = state.cart.findIndex(
+    (i) =>
+      i.id === action.payload.id &&
+      i.selectedColor === action.payload.selectedColor &&
+      i.selectedSize === action.payload.selectedSize
+  );
+
+  if (itemIndex >= 0) {
+    const item = state.cart[itemIndex];
+    if (item.quantity === 1) {
+      state.cart.splice(itemIndex, 1);
+    } else {
+      item.quantity--;
+    }
+  }
+  saveCartToStorage(state.cart);
+},
+
 
     cleanCart: (state) => {
       state.cart = [];

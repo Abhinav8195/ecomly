@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -29,31 +29,46 @@ const Cart = () => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
   const theme = isDark ? colors.dark : colors.light;
+  console.log(cart)
 
-  const [selectedItems, setSelectedItems] = useState([]);
+  const productImages = {
+    1: require("../../../assets/product/tshirt.png"),
+    2: require("../../../assets/product/shoes.png"),
+    3: require("../../../assets/product/cargo.png"),
+    4: require("../../../assets/product/hoodie.png"),
+  };
 
-  const subtotal = cart.reduce(
-    (sum, item) =>
-      selectedItems.includes(item.id)
-        ? sum + Number(item.price || 0) * item.quantity
-        : sum,
-    0
-  );
+  const [selectedItems, setSelectedItems] = useState(
+  cart.map(item => `${item.id}-${item.selectedColor}-${item.selectedSize}`)
+);
+
+useEffect(() => {
+  setSelectedItems(cart.map(item => `${item.id}-${item.selectedColor}-${item.selectedSize}`));
+}, [cart]);
+
+  const subtotal = cart.reduce((sum, item) => {
+  const key = `${item.id}-${item.selectedColor}-${item.selectedSize}`;
+  if (!selectedItems.includes(key)) return sum;
+  const price = Number(item.price.replace("$", "")) || 0;
+  return sum + price * item.quantity;
+}, 0);
+
   const shipping = subtotal > 0 ? 40 : 0;
   const total = subtotal + shipping;
 
   const toggleSelectAll = () => {
-    if (selectedItems.length === cart.length) setSelectedItems([]);
-    else setSelectedItems(cart.map((item) => item.id));
-  };
+  if (selectedItems.length === cart.length) setSelectedItems([]);
+  else setSelectedItems(cart.map(item => `${item.id}-${item.selectedColor}-${item.selectedSize}`));
+};
 
-  const toggleSelectItem = (id) => {
-    if (selectedItems.includes(id)) {
-      setSelectedItems(selectedItems.filter((i) => i !== id));
-    } else {
-      setSelectedItems([...selectedItems, id]);
-    }
-  };
+const toggleSelectItem = (id, color, size) => {
+  const key = `${id}-${color}-${size}`;
+  if (selectedItems.includes(key)) {
+    setSelectedItems(selectedItems.filter(i => i !== key));
+  } else {
+    setSelectedItems([...selectedItems, key]);
+  }
+};
 
   if (cart.length === 0) {
     return (
@@ -122,10 +137,10 @@ const Cart = () => {
       </View>
 
       {/* Cart Items */}
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 140 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 290 }}>
         {cart.map((item, index) => (
           <MotiView
-            key={item.id}
+            key={`${item.id}-${item.selectedColor}-${item.selectedSize}`}
             from={{ opacity: 0, translateY: 30 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{
@@ -134,57 +149,79 @@ const Cart = () => {
               stiffness: 120,
               delay: index * 100,
             }}
-            style={[styles.cartItem, { backgroundColor: isDark ? "#1F1F2F" : "#fff" }]}
+            style={[styles.cartItem, { backgroundColor: isDark ? "#1F1F2F" : "#F6F6F9" }]}
           >
-            <Image source={item.image} style={styles.image} />
+           <Image
+            source={productImages[item.imageKey] || item.image} 
+            style={styles.image}
+          />
+
             <View style={styles.details}>
-              <Text style={[styles.name, { color: theme.textPrimary }]}>{item.name}</Text>
-              <Text style={[styles.price, { color: colors.primary }]}>
-                ${Number(item.price || 0).toFixed(2)}
-              </Text>
-              <Text style={[styles.size, { color: theme.textSecondary }]}>
-                Size: {item.size || "M"}
-              </Text>
+  <Text style={[styles.name, { color: theme.textPrimary }]}>{item.name}</Text>
+  <Text style={[styles.price, { color: colors.primary }]}>
+    ${Number(item.price.replace("$", ""))?.toFixed(2)}
+  </Text>
 
-              {/* Quantity Controls */}
-              <View style={styles.quantityRow}>
-                <TouchableOpacity
-                  onPress={() => dispatch(decrementQuantity(item))}
-                  style={[
-  styles.qtyButton,
-  { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary }
-]}
-                >
-                  <Ionicons name="remove" size={16} color={'white'} />
-                </TouchableOpacity>
+  {/* Size and Color Row */}
+  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 6 }}>
+    <Text style={[styles.size, { color: theme.textSecondary, marginRight: 10 }]}>
+      Size: {item.selectedSize || "M"}
+    </Text>
 
-                <Text style={[styles.qtyText, { color: theme.textPrimary }]}>{item.quantity}</Text>
+    {/* Color Circle */}
+    <View
+      style={{
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: item.selectedColor || '#000',
+        borderWidth: 1,
+        borderColor: '#ccc',
+      }}
+    />
+  </View>
 
-                <TouchableOpacity
-                  onPress={() => dispatch(incrementQuantity(item))}
-                 style={[
-  styles.qtyButton,
-  { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary }
-]}
-                >
-                  <Ionicons name="add" size={16} color={"white"} />
-                </TouchableOpacity>
-              </View>
-            </View>
+  {/* Quantity Controls */}
+  <View style={styles.quantityRow}>
+    <TouchableOpacity
+      onPress={() => dispatch(decrementQuantity(item))}
+      style={[
+        styles.qtyButton,
+        { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary },
+      ]}
+    >
+      <Ionicons name="remove" size={16} color={'white'} />
+    </TouchableOpacity>
+
+    <Text style={[styles.qtyText, { color: theme.textPrimary }]}>{item.quantity}</Text>
+
+    <TouchableOpacity
+      onPress={() => dispatch(incrementQuantity(item))}
+      style={[
+        styles.qtyButton,
+        { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary },
+      ]}
+    >
+      <Ionicons name="add" size={16} color={"white"} />
+    </TouchableOpacity>
+  </View>
+</View>
+
 
             {/* Right Checkbox */}
-            <TouchableOpacity onPress={() => toggleSelectItem(item.id)}>
-              <MotiView
-                animate={{ scale: selectedItems.includes(item.id) ? 1.2 : 1 }}
-                transition={{ type: "spring", damping: 15, stiffness: 120 }}
-              >
-                <Ionicons
-                  name={selectedItems.includes(item.id) ? "checkbox" : "square-outline"}
-                  size={20}
-                  color={colors.warning}
-                />
-              </MotiView>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleSelectItem(item.id, item.selectedColor, item.selectedSize)}>
+  <MotiView
+    animate={{ scale: selectedItems.includes(`${item.id}-${item.selectedColor}-${item.selectedSize}`) ? 1.2 : 1 }}
+    transition={{ type: "spring", damping: 15, stiffness: 120 }}
+  >
+    <Ionicons
+      name={selectedItems.includes(`${item.id}-${item.selectedColor}-${item.selectedSize}`) ? "checkbox" : "square-outline"}
+      size={20}
+      color={colors.warning}
+    />
+  </MotiView>
+</TouchableOpacity>
+
 
             {/* Remove Button */}
             <TouchableOpacity
@@ -201,7 +238,7 @@ const Cart = () => {
       </ScrollView>
 
       {/* Bottom Summary */}
-      <View style={[styles.bottomCard, { backgroundColor: isDark ? "#1C1B29" : "#fff" }]}>
+      <View style={[styles.bottomCard, { backgroundColor: isDark ? "#1C1B29" : "#F6F6F9" }]}>
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryText, { color: theme.textSecondary }]}>Sub Total</Text>
           <Text style={[styles.summaryValue, { color: theme.textPrimary }]}>${subtotal.toFixed(2)}</Text>
@@ -261,7 +298,7 @@ const styles = StyleSheet.create({
   qtyButton: { backgroundColor: "#EFEFFF", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 4 },
   qtyText: { marginHorizontal: 10, fontSize: 14, fontWeight: "600" },
   removeBtn: { padding: 6, marginLeft: 8 },
-  bottomCard: { position: "absolute", bottom: 0, width: "100%", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, elevation: 10 },
+  bottomCard: { position: "absolute", bottom: 100, width: "100%", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, elevation: 10 },
   summaryRow: { flexDirection: "row", justifyContent: "space-between", marginVertical: 4 },
   summaryText: { fontSize: 14 },
   summaryValue: { fontSize: 14, fontWeight: "600" },

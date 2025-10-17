@@ -1,12 +1,28 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from "react-native";
 import { MotiView } from "moti";
+import { useDispatch } from "react-redux";
+import { incrementQuantity, decrementQuantity } from "../redux/CartReducer";
 
-const QuantitySelector = ({ quantity, setQuantity }) => {
+const QuantitySelector = ({ quantity, setQuantity, itemId, selectedColor, selectedSize }) => {
   const isDark = useColorScheme() === "dark";
   const bg = isDark ? "#262626" : "#FFF";
   const btnBg = isDark ? "#1F1F1F" : "#F0F0F0";
   const textColor = isDark ? "#FFF" : "#111";
+
+  const dispatch = useDispatch();
+
+  const handleIncrement = () => {
+    setQuantity(prev => Number(prev) + 1);
+    dispatch(incrementQuantity({ id: itemId, selectedColor, selectedSize }));
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity(prev => Number(prev) - 1);
+      dispatch(decrementQuantity({ id: itemId, selectedColor, selectedSize }));
+    }
+  };
 
   const Button = ({ label, onPress }) => (
     <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
@@ -23,9 +39,9 @@ const QuantitySelector = ({ quantity, setQuantity }) => {
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
-      <Button label="-" onPress={() => setQuantity(prev => (prev > 1 ? prev - 1 : prev))} />
+      <Button label="-" onPress={handleDecrement} />
       <Text style={[styles.quantityText, { color: textColor }]}>{quantity}</Text>
-      <Button label="+" onPress={() => setQuantity(prev => prev + 1)} />
+      <Button label="+" onPress={handleIncrement} />
     </View>
   );
 };

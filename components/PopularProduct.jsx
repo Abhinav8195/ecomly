@@ -12,12 +12,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import colors from "../theme/colors";
 import { router } from "expo-router";
-import products from "../data";
+import productsData from "../data";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart,incrementQuantity,decrementQuantity } from "../redux/CartReducer";
 import Toast from "react-native-toast-message";
 import { addToWishlist, removeFromWishlist } from "../redux/WishListReducer";
 import * as Haptics from "expo-haptics";
+
+
+
+const products = productsData.map(p => ({ ...p, id: String(p.id) }));
 
 const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
   const scheme = useColorScheme();
@@ -27,19 +31,29 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
   const wishlist = useSelector((state) => state.wishlist.wishlist);
   const cart = useSelector((state) => state.cart.cart);
   
+  
 
 
 
 //  console.log('wishlist popolarproducts',wishlist)
 
  const handleAddToCart = (item) => {
-   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  dispatch(addToCart(item));
-  Toast.show({
-    type: "success",
-    text1: `${item.name} added to cart!`,
-  });
-};
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    const payloadItem = {
+      ...item,
+      quantity: 1,
+      selectedColor: item.colors[0],
+      selectedSize: item.sizes[0],
+    };
+
+    dispatch(addToCart(payloadItem));
+    Toast.show({
+      type: "success",
+      text1: `${item.name} added to cart!`,
+    });
+  };
+
  const toggleWishlist = (item) => {
   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -95,6 +109,15 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
             (i) => String(i.id) === String(item.id) 
           );
 
+           const defaultColor = item.colors[0];
+const defaultSize = item.sizes[0];
+
+const existingCartItem = cart.find(
+  (i) =>
+    String(i.id) === String(item.id) 
+);
+          const quantity = existingCartItem ? existingCartItem.quantity : 0;
+
 
           return (
             <MotiView
@@ -146,7 +169,7 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
 
                 <View style={styles.info}>
                   <Text style={[styles.productName, { color: theme.textPrimary }]}>{item.name}</Text>
-                  <Text style={[styles.productPrice, { color: colors.primary }]}>{item.price}</Text>
+                  <Text style={[styles.productPrice, { color: colors.warning }]}>{item.price}</Text>
 
                   {/* Color Dots */}
                   <View style={styles.colorsRow}>
@@ -163,69 +186,91 @@ const PopularProduct = ({ onProductPress, onSeeAllPress }) => {
                     </View>
 
                     {/* Cart + quantity */}
-                    <View>
-                      
+                     <View>
+                      {existingCartItem ? (
+                        <MotiView
+                          key="quantity"
+                          from={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ type: "timing", duration: 200 }}
+                          style={styles.quantityContainer}
+                        >
+                          <TouchableOpacity
+                            onPress={() =>
+                              dispatch(
+                                decrementQuantity({
+                                  ...item,
+                                  selectedColor: item.colors[0],
+                                  selectedSize: item.sizes[0],
+                                })
+                              )
+                            }
+                            style={[
+                              styles.qtyButton,
+                              { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+                            ]}
+                          >
+                            <Ionicons
+                              name="remove"
+                              size={14}
+                              color={isDark ? "white" : colors.primary}
+                            />
+                          </TouchableOpacity>
 
-                      {cart.some((x) => x.id === item.id) ? (
-    <MotiView
-      key="quantity"
-      from={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "timing", duration: 200 }}
-      style={styles.quantityContainer}
-    >
-      <TouchableOpacity
-        onPress={() => dispatch(decrementQuantity(item))}
-        style={[
-          styles.qtyButton,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
-        ]}
-      >
-        <Ionicons name="remove" size={14} color={isDark?'white':colors.primary} />
-      </TouchableOpacity>
+                          <MotiView
+                            from={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ type: "spring", stiffness: 200 }}
+                          >
+                            <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
+                              {quantity}
+                            </Text>
+                          </MotiView>
 
-      <MotiView
-        from={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200 }}
-      >
-        <Text style={[styles.qtyText, { color: isDark ? "#fff" : "#000" }]}>
-          {cart.find((x) => x.id === item.id)?.quantity}
-        </Text>
-      </MotiView>
-
-      <TouchableOpacity
-        onPress={() => dispatch(incrementQuantity(item))}
-        style={[
-          styles.qtyButton,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
-        ]}
-      >
-        <Ionicons name="add" size={14} color={ isDark?'white':colors.primary} />
-      </TouchableOpacity>
-    </MotiView>
-  ) : (
-    <MotiView
-      key="cart"
-      from={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: "timing", duration: 200 }}
-    >
-      <TouchableOpacity
-        onPress={() => handleAddToCart(item)}
-        style={[
-          styles.cartIcon,
-          { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
-        ]}
-      >
-        <Ionicons
-          name="cart-outline"
-          size={16}
-          color={isDark ? colors.dark.textPrimary : colors.primary}
-        />
-      </TouchableOpacity>
-    </MotiView>
-  )}
+                          <TouchableOpacity
+                            onPress={() =>
+                              dispatch(
+                                incrementQuantity({
+                                  ...item,
+                                  selectedColor: item.colors[0],
+                                  selectedSize: item.sizes[0],
+                                })
+                              )
+                            }
+                            style={[
+                              styles.qtyButton,
+                              { backgroundColor: isDark ? colors.dark.textSecondary : "#EFEFFF" },
+                            ]}
+                          >
+                            <Ionicons
+                              name="add"
+                              size={14}
+                              color={isDark ? "white" : colors.primary}
+                            />
+                          </TouchableOpacity>
+                        </MotiView>
+                      ) : (
+                        <MotiView
+                          key="cart"
+                          from={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ type: "timing", duration: 200 }}
+                        >
+                          <TouchableOpacity
+                            onPress={() => handleAddToCart(item)}
+                            style={[
+                              styles.cartIcon,
+                              { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
+                            ]}
+                          >
+                            <Ionicons
+                              name="cart-outline"
+                              size={16}
+                              color={isDark ? colors.dark.textPrimary : colors.primary}
+                            />
+                          </TouchableOpacity>
+                        </MotiView>
+                      )}
                     </View>
                   </View>
                 </View>

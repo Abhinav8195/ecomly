@@ -42,7 +42,18 @@ const ProductDetails = () => {
 
   const [selectedColor, setSelectedColor] = useState(colorsArray[0]);
   const [selectedSize, setSelectedSize] = useState(sizesArray[0]);
-  const [quantity, setQuantity] = useState(1);
+  const cartItem = cart.find(
+  i => i.id === params.id && i.selectedColor === colorsArray[0] && i.selectedSize === sizesArray[0]
+);
+
+const [quantity, setQuantity] = useState(cartItem ? cartItem.quantity : 1);
+
+React.useEffect(() => {
+  const updatedCartItem = cart.find(
+    i => i.id === params.id && i.selectedColor === selectedColor && i.selectedSize === selectedSize
+  );
+  setQuantity(updatedCartItem ? updatedCartItem.quantity : 1);
+}, [selectedColor, selectedSize, cart]);
 
   const bg = isDark ? "#111" : "#F8F8F8";
   const cardBg = isDark ? "#1A1A1A" : "#FFF";
@@ -74,6 +85,42 @@ const toggleWishlist = () => {
     Toast.show({ type: "success", text1: `${item.name} added to wishlist` });
   }
 };
+
+const isInCart = cart.some(
+    i => i.id === item.id && i.selectedColor === selectedColor && i.selectedSize === selectedSize
+  );
+
+ const handleAddToCart = () => {
+  const payloadItem = {
+    ...item,
+    quantity: Number(quantity),
+    selectedColor,
+    selectedSize,
+  };
+
+  const existingIndex = cart.findIndex(
+    i =>
+      i.id === payloadItem.id &&
+      i.selectedColor === selectedColor &&
+      i.selectedSize === selectedSize
+  );
+
+  if (existingIndex >= 0) {
+    const updatedItem = { 
+      ...cart[existingIndex], 
+      quantity: Number(quantity) // Update with new quantity
+    };
+    dispatch({ type: "cart/updateItem", payload: updatedItem });
+    Toast.show({ type: "success", text1: "Quantity updated in cart" });
+  } else {
+    dispatch({ type: "cart/addToCart", payload: payloadItem });
+    Toast.show({ type: "success", text1: "Added to cart" });
+  }
+};
+
+
+
+
 
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
@@ -153,7 +200,13 @@ const toggleWishlist = () => {
           <View style={styles.ratingRow}>
             <AntDesign name="star" size={16} color="#FFD700" />
             <Text style={[styles.ratingText, { color: subText }]}>{params.rating} ({params.reviews} Reviews)</Text>
-            <QuantitySelector quantity={quantity} setQuantity={setQuantity} />
+               <QuantitySelector 
+  quantity={quantity} 
+  setQuantity={setQuantity} 
+  itemId={item.id} 
+  selectedColor={selectedColor} 
+  selectedSize={selectedSize} 
+/>
           </View>
 
           <Text style={[styles.sectionTitle, { color: textColor }]}>Colors</Text>
@@ -181,9 +234,16 @@ const toggleWishlist = () => {
       </ScrollView>
 
       <MotiView from={{ opacity: 0, translateY: 40 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: "timing", duration: 400, delay: 200 }} style={[styles.bottomBar, { backgroundColor: cardBg }]}>
-        <TouchableOpacity style={[styles.addButton, { backgroundColor: "#524EB7" }]}>
-          <Text style={styles.addText}>Add To Cart</Text>
-        </TouchableOpacity>
+        <TouchableOpacity
+  style={[styles.addButton, { backgroundColor: isInCart ? "#AAA" : "#524EB7" }]}
+  onPress={handleAddToCart}
+  disabled={isInCart}
+>
+  <Text style={styles.addText}>
+     {isInCart ? "Update Cart" : "Add To Cart"}
+  </Text>
+</TouchableOpacity>
+
       </MotiView>
     </View>
   );
