@@ -138,7 +138,10 @@ const SignIn = () => {
           >
             <TouchableOpacity
               style={[styles.button, { backgroundColor: colors.primary }]}
-              onPress={() => router.push("/home")}
+             onPress={() => {
+    router.dismissAll(); 
+    router.replace("/(usertabs)/(tabs)/Home");
+  }}
               activeOpacity={0.8}
             >
               <Text style={styles.buttonText}>Sign In</Text>

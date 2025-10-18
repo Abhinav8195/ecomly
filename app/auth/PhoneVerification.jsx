@@ -56,9 +56,10 @@ const PhoneVerification = () => {
       text2: "Verification code sent successfully!",
     });
 
-    setTimeout(() => {
-      router.push("/(usertabs)/(tabs)/Home");
-    }, 800);
+     setTimeout(() => {
+      router.dismissAll();
+      router.replace("/(usertabs)/(tabs)/Home"); 
+    }, 800)
   };
 
   return (

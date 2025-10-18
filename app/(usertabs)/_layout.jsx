@@ -11,6 +11,7 @@ import {
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { Ionicons, MaterialCommunityIcons, Feather, FontAwesome } from "@expo/vector-icons";
 import { MotiView } from "moti";
+import { router } from "expo-router";
 
 export default function Layout() {
   const colorScheme = useColorScheme();
@@ -33,12 +34,50 @@ export default function Layout() {
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
       <Drawer.Screen name="(tabs)" options={{ drawerLabel: "Home", drawerIcon: ({ color }) => <Ionicons name="home-outline" size={22} color={color} /> }} />
-      <Drawer.Screen name="categories" options={{ drawerLabel: "Shop by Categories", drawerIcon: ({ color }) => <MaterialCommunityIcons name="shape-outline" size={22} color={color} /> }} />
-      <Drawer.Screen name="edit-profile" options={{ drawerLabel: "Edit Profile", drawerIcon: ({ color }) => <Feather name="edit-3" size={22} color={color} /> }} />
-      <Drawer.Screen name="favourites" options={{ drawerLabel: "Favourites", drawerIcon: ({ color }) => <Ionicons name="heart-outline" size={22} color={color} /> }} />
-      <Drawer.Screen name="orders" options={{ drawerLabel: "My Orders", drawerIcon: ({ color }) => <MaterialCommunityIcons name="truck-delivery-outline" size={22} color={color} /> }} />
-      <Drawer.Screen name="privacy" options={{ drawerLabel: "Privacy Policy", drawerIcon: ({ color }) => <Feather name="shield" size={22} color={color} /> }} />
-      <Drawer.Screen name="terms" options={{ drawerLabel: "Terms & Conditions", drawerIcon: ({ color }) => <FontAwesome name="file-text-o" size={22} color={color} /> }} />
+      <Drawer.Screen
+  name="Orders"
+  options={{
+    drawerLabel: "My Orders",
+    drawerIcon: ({ color }) => (
+      <MaterialCommunityIcons name="truck-delivery-outline" size={22} color={color} />
+    ),
+  }}
+/>
+<Drawer.Screen
+  name="Return"
+  options={{
+    drawerLabel: "My Returns",
+    drawerIcon: ({ color }) => (
+      <MaterialCommunityIcons name="rotate-3d-variant" size={22} color={color} />
+    ),
+  }}
+/>
+<Drawer.Screen
+  name="Contact"
+  options={{
+    drawerLabel: "Contact Us",
+    drawerIcon: ({ color }) => <Ionicons name="call-outline" size={22} color={color} />,
+  }}
+/>
+
+<Drawer.Screen
+  name="PrivacyPolicy"
+  options={{
+    drawerLabel: "Privacy Policy",
+    drawerIcon: ({ color }) => <Feather name="shield" size={22} color={color} />,
+  }}
+/>
+
+<Drawer.Screen
+  name="Terms"
+  options={{
+    drawerLabel: "Terms & Conditions",
+    drawerIcon: ({ color }) => <FontAwesome name="file-text-o" size={22} color={color} />,
+  }}
+/>
+
+
+
     </Drawer>
   );
 }
@@ -71,7 +110,7 @@ function CustomDrawerContent(props) {
           style={styles.avatar}
         />
         <Text style={[styles.name, { color: isDark ? "#FFF" : "#000" }]}>
-          Alex Smith
+          Abhinav Bhatia
         </Text>
       </MotiView>
 
@@ -122,7 +161,7 @@ function CustomDrawerContent(props) {
             styles.signOutButton,
             { backgroundColor: isDark ? "#524EB7" : "#524EB7" },
           ]}
-          onPress={() => console.log("Sign Out")}
+          onPress={() =>router.replace('/')}
         >
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>

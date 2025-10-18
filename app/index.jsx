@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Welcome from "../components/Welcome";
 
 export default function Index() {
-const [isUserVerified, setIsUserVerified] = useState(true);
+const [isUserVerified, setIsUserVerified] = useState(null);
   const [loading, setLoading] = useState(true);
   return (
      <View style={{ flex: 1 }}>
