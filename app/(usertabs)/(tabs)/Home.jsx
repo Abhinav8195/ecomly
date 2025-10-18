@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -24,6 +24,8 @@ const Home = () => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const navigation=useNavigation();
+   const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <ScrollView
@@ -50,10 +52,125 @@ const Home = () => {
         </MotiView>
       </View>
 
-      <SearchBar onFilterPress={() => console.log("Filter pressed")} />
+     <SearchBar
+          onResults={(results, text) => {
+            setSearchResults(results);
+            setSearchQuery(text);
+          }}
+        />
+
+{searchQuery.length > 0 && searchResults.length > 0 && (
+  <View
+    style={[
+      styles.suggestionsOverlay,
+      { backgroundColor: isDark ? "#2A2A2A" : "#FFF" },
+    ]}
+  >
+    <ScrollView
+      style={{ maxHeight: 300 }}
+      nestedScrollEnabled
+      showsVerticalScrollIndicator={false}
+    >
+   {searchResults.length > 0 && (
+  <>
+    <TouchableOpacity
+  activeOpacity={0.8}
+  onPress={() =>
+    router.push({
+      pathname: "/SearchResults",
+      params: {
+        query: searchQuery,
+        results: JSON.stringify(searchResults),
+      },
+    })
+  }
+>
+  <MotiView
+    from={{ opacity: 0, translateY: -10 }}
+    animate={{ opacity: 1, translateY: 0 }}
+    transition={{ type: "timing", duration: 400 }}
+    style={{ paddingVertical: 6, paddingHorizontal: 10 ,marginVertical:5}}
+  >
+    <Text
+      style={{
+        fontSize: 16,
+        fontFamily: "Switzer-Bold",
+        color: isDark ? colors.dark.textPrimary : colors.primary,
+        textDecorationLine: "underline",
+      }}
+    >
+      Showing results for “{searchQuery}”
+    </Text>
+  </MotiView>
+</TouchableOpacity>
+
+
+    {searchResults.map((item) => (
+      <TouchableOpacity
+        key={item.id}
+        style={[
+          styles.suggestionItem,
+          { backgroundColor: isDark ? "#333" : "#F5F5F5" },
+        ]}
+        onPress={() =>
+          router.push({
+            pathname: "/ProductDetails",
+            params: {
+              id: String(item.id),
+              name: item.name,
+              price: item.price,
+              rating: item.rating,
+              description: item.description,
+              colors: JSON.stringify(item.colors),
+              sizes: JSON.stringify(item.sizes),
+              reviews: item.reviews,
+              imageKey: item.id,
+              shop: item.shop,
+            },
+          })
+        }
+      >
+        <Image
+          source={{ uri: item.image }}
+          style={styles.suggestionImage}
+        />
+        <View style={{ flex: 1, marginLeft: 10 }}>
+          <Text
+            numberOfLines={1}
+            style={{
+              color: isDark ? "#fff" : "#000",
+              fontWeight: "600",
+              fontSize: 16,
+            }}
+          >
+            {item.name}
+          </Text>
+          <Text style={{ color: colors.warning, fontSize: 14 }}>
+            {item.price}
+          </Text>
+          <Text
+            style={{
+              color: isDark ? "#aaa" : "#555",
+              fontSize: 12,
+            }}
+          >
+            {item.category}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    ))}
+  </>
+)}
+
+
+    </ScrollView>
+  </View>
+)}
+
+
 
      
-<OfferCarousel/>
+      <OfferCarousel/>
 
     
 <CategoriesCarousel />
@@ -106,5 +223,29 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 14,
   },
+  suggestionsOverlay: {
+  position: "absolute",
+  top: 130, 
+  left: 15,
+  right: 15,
+  zIndex: 999,
+  borderRadius: 12,
+  padding: 5,
+  shadowColor: "#000",
+  shadowOpacity: 0.1,
+  shadowRadius: 5,
+  elevation: 5,
+},
+
+suggestionItem: {
+  flexDirection: "row",
+  alignItems: "center",
+  padding: 10,
+  borderRadius: 12,
+  marginBottom: 8,
+},
+
+suggestionImage: { width: 50, height: 50, borderRadius: 8 },
+
   
 });
