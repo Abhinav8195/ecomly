@@ -116,6 +116,27 @@ const Explore = () => {
         </View>
       </View>
 
+      <MotiView
+  key={selectedCategory} 
+  from={{ opacity: 0, translateY: 10 }}
+  animate={{ opacity: 1, translateY: 0 }}
+  transition={{ type: "timing", duration: 500 }}
+  style={{ paddingHorizontal: 20, paddingTop: 10 }}
+>
+  <Text
+    style={{
+      fontSize: 16,
+      fontFamily: "Switzer-Semibold",
+      color: theme.textPrimary,
+    }}
+  >
+    {selectedCategory === "All"
+      ? "All New Arrival"
+      : `All ${selectedCategory}${selectedCategory.endsWith('s') ? '' : 's'}`}
+  </Text>
+</MotiView>
+
+
       {/* Category Tabs */}
       <MotiView
         from={{ opacity: 0, translateY: -10 }}
@@ -290,7 +311,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  headerTitle: { fontSize: 22 },
+  headerTitle: { fontSize: 26 },
   categoryContainer: { paddingHorizontal: 20, paddingVertical: 10 },
   categoryTab: {
     paddingVertical: 8,

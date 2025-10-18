@@ -194,8 +194,10 @@ const isInCart = cart.some(
           </View>
 
            {params?.shop && (
-            <TouchableOpacity onPress={() => console.log("Shop pressed:", params.shop)}>
-              <Text style={[styles.shopText, { color: "#524EB7", marginBottom: 8 }]}>
+            <TouchableOpacity  onPress={() =>
+      router.push(`/SellerStore?shop=${encodeURIComponent(params.shop)}`)
+    }>
+              <Text style={[styles.shopText, { color:isDark? colors.dark.textSecondary:colors.primary, marginBottom: 8 }]}>
                 Sold by: {params.shop}
               </Text>
             </TouchableOpacity>
