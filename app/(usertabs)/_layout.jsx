@@ -33,30 +33,51 @@ export default function Layout() {
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
     >
-      <Drawer.Screen name="(tabs)" options={{ drawerLabel: "Home", drawerIcon: ({ color }) => <Ionicons name="home-outline" size={22} color={color} /> }} />
-      <Drawer.Screen
-  name="Orders"
+     <Drawer.Screen
+  name="(tabs)"
   options={{
-    drawerLabel: "My Orders",
-    drawerIcon: ({ color }) => (
-      <MaterialCommunityIcons name="truck-delivery-outline" size={22} color={color} />
+    drawerLabel: "Home",
+    drawerIcon: () => (
+      <Ionicons name="home-outline" size={22} color={isDark ? "#FFF" : "#333"} />
     ),
   }}
 />
+
+<Drawer.Screen
+  name="Orders"
+  options={{
+    drawerLabel: "My Orders",
+    drawerIcon: () => (
+      <MaterialCommunityIcons
+        name="truck-delivery-outline"
+        size={22}
+        color={isDark ? "#FFF" : "#333"}
+      />
+    ),
+  }}
+/>
+
 <Drawer.Screen
   name="Return"
   options={{
     drawerLabel: "My Returns",
-    drawerIcon: ({ color }) => (
-      <MaterialCommunityIcons name="rotate-3d-variant" size={22} color={color} />
+    drawerIcon: () => (
+      <MaterialCommunityIcons
+        name="rotate-3d-variant"
+        size={22}
+        color={isDark ? "#FFF" : "#333"}
+      />
     ),
   }}
 />
+
 <Drawer.Screen
   name="Contact"
   options={{
     drawerLabel: "Contact Us",
-    drawerIcon: ({ color }) => <Ionicons name="call-outline" size={22} color={color} />,
+    drawerIcon: () => (
+      <Ionicons name="call-outline" size={22} color={isDark ? "#FFF" : "#333"} />
+    ),
   }}
 />
 
@@ -64,7 +85,9 @@ export default function Layout() {
   name="PrivacyPolicy"
   options={{
     drawerLabel: "Privacy Policy",
-    drawerIcon: ({ color }) => <Feather name="shield" size={22} color={color} />,
+    drawerIcon: () => (
+      <Feather name="shield" size={22} color={isDark ? "#FFF" : "#333"} />
+    ),
   }}
 />
 
@@ -72,12 +95,11 @@ export default function Layout() {
   name="Terms"
   options={{
     drawerLabel: "Terms & Conditions",
-    drawerIcon: ({ color }) => <FontAwesome name="file-text-o" size={22} color={color} />,
+    drawerIcon: () => (
+      <FontAwesome name="file-text-o" size={22} color={isDark ? "#FFF" : "#333"} />
+    ),
   }}
 />
-
-
-
     </Drawer>
   );
 }
@@ -133,7 +155,7 @@ function CustomDrawerContent(props) {
                 focused={focused}
                 onPress={() => props.navigation.navigate(route.name)}
                 labelStyle={{
-                  color: focused ? "#524EB7" : isDark ? "#E0E0E0" : "#333",
+                  color: focused ? "#9E9CDC" : isDark ? "#E0E0E0" : "#333",
                   fontWeight: "500",
                   fontSize: 15,
                 }}
