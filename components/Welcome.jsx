@@ -42,10 +42,11 @@ const Welcome = () => {
         transition={{ type: "spring", damping: 10, stiffness: 100 }}
         style={styles.companyWrapper}
       >
-        <Text style={styles.companyName}>
+        {/* <Text style={styles.companyName}>
           <Text style={{ color: colors.light.redPrimary }}>Baj</Text>
           <Text style={{ color:isDark?"white":"black" }}>Go</Text>
-        </Text>
+        </Text> */}
+        <Image source={require('../assets/images/icon.png')} style={{width:130,height:60,resizeMode:'cover'}}/>
       </MotiView>
 
       {/* Year */}
