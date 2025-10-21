@@ -72,7 +72,7 @@ const SellerAbout = () => {
           multiline
         />
         <TouchableOpacity
-          style={[styles.sendBtn, { backgroundColor: colors.primary }]}
+          style={[styles.sendBtn, { backgroundColor: colors.light.redPrimary }]}
           onPress={handleSendSuggestion}
         >
           <Text style={styles.sendText}>Send</Text>

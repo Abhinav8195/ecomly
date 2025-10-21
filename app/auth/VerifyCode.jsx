@@ -74,7 +74,7 @@ const VerifyCode = () => {
         <Text style={[styles.title, { color: theme.textPrimary }]}>
           Verify Code
         </Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+        <Text style={[styles.subtitle, { color: isDark?colors.light.background:theme.textSecondary }]}>
           We’ve sent a 4-digit verification code to your email{"\n"}{email}
         </Text>
 
@@ -103,7 +103,7 @@ const VerifyCode = () => {
 
         
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: colors.primary }]}
+          style={[styles.button, { backgroundColor: colors.light.redPrimary }]}
           onPress={handleContinue}
           activeOpacity={0.8}
         >

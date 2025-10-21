@@ -60,45 +60,47 @@ const Profile = () => {
           <Ionicons
             name={editMode ? "close-outline" : "pencil-outline"}
             size={24}
-            color={colors.primary}
+            color={colors.light.redPrimary}
           />
         </TouchableOpacity>
       </MotiView>
 
       {/* Animated Profile Picture */}
       <MotiView
-  from={{ opacity: 0, translateY: 40, scale: 0.95 }}
-  animate={{ opacity: 1, translateY: 0, scale: 1 }}
-  transition={{
-    type: "timing",
-    duration: 700,
-     easing: Easing.out(Easing.cubic),
-  }}
-  style={styles.profileContainer}
->
-  <TouchableOpacity disabled={!editMode} onPress={pickImage}>
-    <Image
-      source={{ uri: profileImage }}
-      style={[styles.profileImage, { shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 10 }]}
-    />
-  </TouchableOpacity>
-
-  <AnimatePresence>
-    {editMode && (
-      <MotiView
-        from={{ opacity: 0, translateY: 8 }}
-        animate={{ opacity: 1, translateY: 0 }}
-        exit={{ opacity: 0, translateY: 8 }}
-        transition={{ type: "timing", duration: 400, delay: 200 }}
+        from={{ opacity: 0, translateY: 40, scale: 0.95 }}
+        animate={{ opacity: 1, translateY: 0, scale: 1 }}
+        transition={{
+          type: "timing",
+          duration: 700,
+          easing: Easing.out(Easing.cubic),
+        }}
+        style={styles.profileContainer}
       >
-        <Text style={[styles.changePhoto, { color: colors.primary }]}>
-          Tap to change
-        </Text>
-      </MotiView>
-    )}
-  </AnimatePresence>
-</MotiView>
+        <TouchableOpacity disabled={!editMode} onPress={pickImage}>
+          <Image
+            source={{ uri: profileImage }}
+            style={[
+              styles.profileImage,
+              { shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 10 },
+            ]}
+          />
+        </TouchableOpacity>
 
+        <AnimatePresence>
+          {editMode && (
+            <MotiView
+              from={{ opacity: 0, translateY: 8 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 8 }}
+              transition={{ type: "timing", duration: 400, delay: 200 }}
+            >
+              <Text style={[styles.changePhoto, { color: colors.light.redPrimary }]}>
+                Tap to change
+              </Text>
+            </MotiView>
+          )}
+        </AnimatePresence>
+      </MotiView>
 
       {/* Form Fields */}
       <MotiView
@@ -118,7 +120,7 @@ const Profile = () => {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ delay: index * 100 + 400 }}
           >
-            <Text style={[styles.label, { color: theme.textSecondary }]}>
+            <Text style={[styles.label, { color: isDark ? colors.light.redPrimary : theme.textSecondary }]}>
               {field.label}
             </Text>
             <TextInput
@@ -145,58 +147,61 @@ const Profile = () => {
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ delay: 700 }}
         >
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Gender
-          </Text>
+          <Text style={[styles.label, { color:isDark?colors.light.redPrimary: theme.textSecondary }]}>Gender</Text>
           <View style={styles.genderRow}>
-            {["Male", "Female", "Other"].map((gender, i) => (
-              <MotiView
-                key={gender}
-                from={{ opacity: 0, translateY: 10 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ delay: 800 + i * 100 }}
-              >
-                <TouchableOpacity
-                  onPress={() => editMode && setSelectedGender(gender)}
-                  style={styles.genderOption}
+            {["Male", "Female", "Other"].map((gender, i) => {
+              const isSelected = selectedGender === gender;
+              return (
+                <MotiView
+                  key={gender}
+                  from={{ opacity: 0, translateY: 10 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ delay: 800 + i * 100 }}
                 >
-                  <View
-                    style={[
-                      styles.radioCircle,
-                      {
-                        borderColor:
-                          selectedGender === gender
-                            ? colors.primary
-                            : theme.textSecondary,
-                      },
-                    ]}
+                  <TouchableOpacity
+                    onPress={() => editMode && setSelectedGender(gender)}
+                    style={styles.genderOption}
                   >
-                    {selectedGender === gender && (
-                      <View
-                        style={[
-                          styles.radioInner,
-                          { backgroundColor: colors.primary },
-                        ]}
-                      />
-                    )}
-                  </View>
-                  <Text
-                    style={[
-                      styles.genderLabel,
-                      {
-                        color:
-                          selectedGender === gender
-                            ? colors.primary
-                            : theme.textSecondary,
-                        fontFamily: "Switzer-Medium",
-                      },
-                    ]}
-                  >
-                    {gender}
-                  </Text>
-                </TouchableOpacity>
-              </MotiView>
-            ))}
+                    <View
+                      style={[
+                        styles.radioCircle,
+                        {
+                          borderColor: isSelected
+                            ? colors.light.redPrimary
+                            : isDark
+                            ? "#555"
+                            : "#CCC",
+                        },
+                      ]}
+                    >
+                      {isSelected && (
+                        <View
+                          style={[
+                            styles.radioInner,
+                            { backgroundColor: colors.light.redPrimary },
+                          ]}
+                        />
+                      )}
+                    </View>
+                    <Text
+                      style={[
+                        styles.genderLabel,
+                        {
+                          color: isSelected
+                            ? colors.light.redPrimary
+                            : isDark
+                            ? "#AAA"
+                            : "#555",
+                          fontFamily: "Switzer-Medium",
+                        },
+                      ]}
+                    >
+                      {gender}
+                    </Text>
+                  </TouchableOpacity>
+                </MotiView>
+              );
+            })}
           </View>
         </MotiView>
 
@@ -210,7 +215,7 @@ const Profile = () => {
               transition={{ type: "timing", duration: 400 }}
             >
               <TouchableOpacity
-                style={[styles.saveButton, { backgroundColor: colors.primary }]}
+                style={[styles.saveButton, { backgroundColor: colors.light.redPrimary }]}
                 onPress={() => setEditMode(false)}
               >
                 <Text style={[styles.saveText, { fontFamily: "Switzer-Bold" }]}>

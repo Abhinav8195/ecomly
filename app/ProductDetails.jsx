@@ -19,6 +19,7 @@ import RelatedProducts from "../components/RelatedProducts";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "../redux/WishListReducer";
 import Toast from "react-native-toast-message";
+import { color } from "framer-motion";
 
 const ProductDetails = () => {
   const colorScheme = useColorScheme();
@@ -164,7 +165,7 @@ const isInCart = cart.some(
             position: "absolute",
             top: -4,
             right: -4,
-            backgroundColor: isDark?colors.dark.textSecondary:colors.primary,
+            backgroundColor: colors.light.redPrimary,
             minWidth: 16,
             height: 16,
             borderRadius: 8,
@@ -218,14 +219,14 @@ const isInCart = cart.some(
           <Text style={[styles.sectionTitle, { color: textColor }]}>Colors</Text>
           <View style={styles.colorRow}>
             {colorsArray.map((c, i) => (
-              <TouchableOpacity key={i} style={[styles.colorCircle, { backgroundColor: c, borderColor: selectedColor === c ? "#524EB7" : "transparent" }]} onPress={() => setSelectedColor(c)} />
+              <TouchableOpacity key={i} style={[styles.colorCircle, { backgroundColor: c, borderColor: selectedColor === c ? colors.light.redPrimary : "transparent" }]} onPress={() => setSelectedColor(c)} />
             ))}
           </View>
 
           <Text style={[styles.sectionTitle, { color: textColor }]}>Size</Text>
           <View style={styles.sizeRow}>
             {sizesArray.map((s, i) => (
-              <TouchableOpacity key={i} onPress={() => setSelectedSize(s)} style={[styles.sizeBox, { backgroundColor: selectedSize === s ? "#524EB7" : isDark ? "#1A1A1A" : "#EEE", borderColor: selectedSize === s ? "#524EB7" : isDark ? "#444" : "rgba(0,0,0,0.1)", borderWidth: 1.2 }]}>
+              <TouchableOpacity key={i} onPress={() => setSelectedSize(s)} style={[styles.sizeBox, { backgroundColor: selectedSize === s ? colors.light.redPrimary : isDark ? "#1A1A1A" : "#EEE", borderColor: selectedSize === s ? colors.light.redPrimary : isDark ? "#444" : "rgba(0,0,0,0.1)", borderWidth: 1.2 }]}>
                 <Text style={[styles.sizeText, { color: selectedSize === s ? "#FFF" : subText }]}>{s}</Text>
               </TouchableOpacity>
             ))}
@@ -241,7 +242,7 @@ const isInCart = cart.some(
 
       <MotiView from={{ opacity: 0, translateY: 40 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: "timing", duration: 400, delay: 200 }} style={[styles.bottomBar, { backgroundColor: cardBg }]}>
         <TouchableOpacity
-  style={[styles.addButton, { backgroundColor: isInCart ? "#AAA" : "#524EB7" }]}
+  style={[styles.addButton, { backgroundColor: isInCart ? "#AAA" : colors.light.redPrimary }]}
   onPress={handleAddToCart}
   disabled={isInCart}
 >

@@ -162,7 +162,7 @@ const NewPassword = () => {
           transition={{ type: "timing", duration: 600, delay: 200 }}
         >
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
+            style={[styles.button, { backgroundColor: colors.light.redPrimary }]}
             onPress={handleReset}
             activeOpacity={0.8}
           >

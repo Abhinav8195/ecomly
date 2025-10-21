@@ -63,7 +63,7 @@ const SignIn = () => {
           <Text style={[styles.title, { color: theme.textPrimary }]}>
             Hello User 👋
           </Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+          <Text style={[styles.subtitle, { color:isDark?"#ddd": theme.textSecondary }]}>
             Please sign in with your account
           </Text>
         </MotiView>
@@ -78,7 +78,7 @@ const SignIn = () => {
           <Text style={[styles.label, { color: theme.textPrimary }]}>Email</Text>
           <TextInput
             placeholder="Your Email"
-            placeholderTextColor={theme.textSecondary}
+            placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
             value={email}
             onChangeText={setEmail}
             style={[
@@ -105,7 +105,7 @@ const SignIn = () => {
           >
             <TextInput
               placeholder="Password"
-              placeholderTextColor={theme.textSecondary}
+              placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
@@ -118,14 +118,14 @@ const SignIn = () => {
               <Ionicons
                 name={showPassword ? "eye-off-outline" : "eye-outline"}
                 size={22}
-                color={theme.textSecondary}
+                color={isDark?colors.light.background:theme.textSecondary}
               />
             </TouchableOpacity>
           </View>
 
           
           <TouchableOpacity onPress={() => router.push("/auth/ForgotPassword")}>
-            <Text style={[styles.forgotText, { color: colors.primary }]}>
+            <Text style={[styles.forgotText, { color: colors.light.redPrimary }]}>
               Forgot Password?
             </Text>
           </TouchableOpacity>
@@ -137,7 +137,7 @@ const SignIn = () => {
             transition={{ type: "timing", duration: 600, delay: 200 }}
           >
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
+              style={[styles.button, { backgroundColor: colors.light.redPrimary }]}
              onPress={() => {
     router.dismissAll(); 
     router.replace("/(usertabs)/(tabs)/Home");
@@ -152,10 +152,10 @@ const SignIn = () => {
 
       
       <View style={styles.footer}>
-        <Text style={[styles.footerText, { color: theme.textSecondary }]}>
+        <Text style={[styles.footerText, { color: isDark?colors.light.background : theme.textSecondary }]}>
           Don’t have an account?{" "}
           <Text
-            style={[styles.createText, { color: colors.primary }]}
+            style={[styles.createText, { color: colors.light.redPrimary }]}
             onPress={() => router.push("/auth/SignUp")}
           >
             Create Account

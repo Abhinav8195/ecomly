@@ -285,7 +285,7 @@ const Explore = () => {
                 styles.categoryTab,
                 {
                   backgroundColor:
-                    selectedCategory === item ? colors.primary : theme.card,
+                    selectedCategory === item ? colors.light.redPrimary : theme.card,
                 },
               ]}
             >
@@ -294,7 +294,7 @@ const Explore = () => {
                   styles.categoryText,
                   {
                     color:
-                      selectedCategory === item ? "#fff" : theme.textSecondary,
+                      selectedCategory === item ? "#fff" : colors.light.redSecondary,
                     fontFamily: "Switzer-Medium",
                   },
                 ]}
@@ -389,7 +389,7 @@ const Explore = () => {
                   {item.name}
                 </Text>
                 <Text
-                  style={[styles.productDesc, { color: theme.textSecondary, fontFamily: "Switzer-Regular" }]}
+                  style={[styles.productDesc, { color: colors.light.textSecondary, fontFamily: "Switzer-Regular" }]}
                   numberOfLines={2}
                 >
                   {item.description}

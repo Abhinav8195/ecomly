@@ -100,7 +100,7 @@ const SignUp = () => {
             <Text style={[styles.heading, { color: theme.textPrimary }]}>
               Create an Account
             </Text>
-            <Text style={[styles.subText, { color: theme.textSecondary }]}>
+            <Text style={[styles.subText, { color: isDark?colors.light.background:theme.textSecondary }]}>
               Please create with your account
             </Text>
 
@@ -111,7 +111,7 @@ const SignUp = () => {
               </Text>
               <TextInput
                 placeholder="John Doe"
-                placeholderTextColor={theme.textSecondary}
+                placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
                 style={[
                   styles.input,
                   {
@@ -131,7 +131,7 @@ const SignUp = () => {
               </Text>
               <TextInput
                 placeholder="example@email.com"
-                placeholderTextColor={theme.textSecondary}
+                placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 style={[
@@ -162,7 +162,7 @@ const SignUp = () => {
               >
                 <TextInput
                   placeholder="Enter your password"
-                  placeholderTextColor={theme.textSecondary}
+                  placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
@@ -175,7 +175,7 @@ const SignUp = () => {
                   <Ionicons
                     name={showPassword ? "eye-off-outline" : "eye-outline"}
                     size={22}
-                    color={theme.textSecondary}
+                    color={isDark?colors.light.background:theme.textSecondary}
                   />
                 </TouchableOpacity>
               </View>
@@ -188,7 +188,7 @@ const SignUp = () => {
               transition={{ type: "timing", duration: 600, delay: 200 }}
             >
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: colors.primary }]}
+                style={[styles.button, { backgroundColor: colors.light.redPrimary }]}
                 activeOpacity={0.8}
                 onPress={handleSignUp}
               >
@@ -200,10 +200,10 @@ const SignUp = () => {
 
         
         <View style={styles.footer}>
-          <Text style={[styles.bottomText, { color: theme.textSecondary }]}>
+          <Text style={[styles.bottomText, { color: isDark?colors.light.background:theme.textSecondary }]}>
             Already have an account?{" "}
             <Text
-              style={[styles.link, { color: colors.primary }]}
+              style={[styles.link, { color: colors.light.redPrimary }]}
               onPress={() => router.push("/auth/SignIn")}
             >
               Sign In

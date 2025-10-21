@@ -85,7 +85,7 @@ const PhoneVerification = () => {
         <Text style={[styles.title, { color: theme.textPrimary }]}>
           What’s Your Number
         </Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+        <Text style={[styles.subtitle, { color:colors.light.redPrimary }]}>
           Please enter your number
         </Text>
 
@@ -128,7 +128,7 @@ const PhoneVerification = () => {
             <TextInput
               style={[styles.textInput, { color: theme.textPrimary }]}
               placeholder="Enter phone number"
-              placeholderTextColor={theme.textSecondary + "90"}
+              placeholderTextColor={isDark?"white":"black" + "90"}
               keyboardType="phone-pad"
               maxLength={15}
               value={phone}
@@ -144,7 +144,7 @@ const PhoneVerification = () => {
           transition={{ type: "timing", duration: 500, delay: 400 }}
         >
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
+            style={[styles.button, { backgroundColor: colors.light.redPrimary }]}
             onPress={handleContinue}
             activeOpacity={0.9}
           >

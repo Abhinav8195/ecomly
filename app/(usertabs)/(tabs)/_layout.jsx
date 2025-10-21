@@ -1,6 +1,13 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { View, TouchableOpacity, StyleSheet, Platform, useColorScheme, Text } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  useColorScheme,
+  Text,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MotiView, AnimatePresence } from "moti";
 import colors from "../../../theme/colors";
@@ -25,8 +32,8 @@ function CustomTabBar({ state, navigation }) {
   const scheme = useColorScheme();
   const theme = scheme === "dark" ? colors.dark : colors.light;
   const cart = useSelector((state) => state.cart.cart);
-   const wishlist = useSelector((state) => state.wishlist.wishlist);
-   const wishlistLength = wishlist.length;
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const wishlistLength = wishlist.length;
   const cartLength = cart.length;
 
   const icons = {
@@ -37,14 +44,24 @@ function CustomTabBar({ state, navigation }) {
     Profile: "person-outline",
   };
 
+  // pick red shades from theme.js
+  const activeColor =
+    scheme === "dark" ? theme.redPrimary || "#D32F2F" : theme.redPrimary || "#D32F2F";
+  const backgroundColor =
+    scheme === "dark"
+      ? theme.card || "#2A1111"
+      : theme.redBackground || "#FFFFFF";
+  const glowColor = activeColor;
+  const inactiveColor = "#A0A0A0";
+
   return (
     <View style={styles.tabWrapper}>
       <View
         style={[
           styles.tabContainer,
           {
-            backgroundColor:
-              scheme === "dark" ? colors.dark.card : colors.light.background,
+            backgroundColor: backgroundColor,
+            shadowColor: activeColor,
           },
         ]}
       >
@@ -53,6 +70,7 @@ function CustomTabBar({ state, navigation }) {
           const onPress = () => navigation.navigate(route.name);
           const isCart = route.name === "Cart";
           const isWishlist = route.name === "Wishlist";
+
           return (
             <TouchableOpacity
               key={route.name}
@@ -62,7 +80,7 @@ function CustomTabBar({ state, navigation }) {
             >
               <MotiView
                 animate={{
-                  translateY: isCart && isFocused ? -15 : 0,
+                  translateY: isFocused && isCart ? -15 : 0,
                   scale: isFocused ? 1.2 : 1,
                 }}
                 transition={{
@@ -72,48 +90,49 @@ function CustomTabBar({ state, navigation }) {
                 }}
                 style={{ alignItems: "center", justifyContent: "center" }}
               >
+                {/* 🔥 Red Glow behind active Cart */}
                 <AnimatePresence>
                   {isCart && isFocused && (
                     <MotiView
                       from={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 0.99, scale: 1 }}
+                      animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0 }}
                       transition={{ type: "timing", duration: 300 }}
-                      style={[
-                        styles.glowCircle,
-                        {
-                          backgroundColor:
-                            scheme === "dark"
-                              ? colors.primary
-                              : colors.primary,
-                        },
-                      ]}
+                      style={[styles.glowCircle, { backgroundColor: glowColor }]}
                     />
                   )}
                 </AnimatePresence>
 
                 {/* 🛒 Cart Badge */}
                 {isCart && cartLength > 0 && (
-                  <View style={styles.badgeContainer}>
+                  <View style={[styles.badgeContainer, { backgroundColor: activeColor }]}>
                     <Text style={styles.badgeText}>
                       {cartLength > 9 ? "9+" : cartLength}
                     </Text>
                   </View>
                 )}
 
-                
+                {/* ❤️ Wishlist Badge */}
+                {isWishlist && wishlistLength > 0 && (
+                  <View style={[styles.badgeContainer, { backgroundColor: activeColor }]}>
+                    <Text style={styles.badgeText}>
+                      {wishlistLength > 9 ? "9+" : wishlistLength}
+                    </Text>
+                  </View>
+                )}
 
                 <Ionicons
-                  name={icons[route.name]}
-                  size={26}
-                  color={
-                    isCart && isFocused
-                      ? "#fff"
-                      : isFocused
-                      ? "#6C5CE7"
-                      : "#A0A0A0"
-                  }
-                />
+  name={icons[route.name]}
+  size={26}
+  color={
+    isFocused
+      ? route.name === "Cart"
+        ? "#FFFFFF" // Cart active → white icon
+        : activeColor // others active → red
+      : inactiveColor // inactive → gray
+  }
+/>
+
               </MotiView>
             </TouchableOpacity>
           );
@@ -135,15 +154,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#F6F6FA",
     marginHorizontal: 20,
     marginBottom: Platform.OS === "ios" ? 30 : 20,
     borderRadius: 30,
     paddingVertical: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 10,
   },
   tabButton: {
     alignItems: "center",
@@ -155,13 +172,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#6C5CE7",
   },
   badgeContainer: {
     position: "absolute",
     top: -4,
     right: -6,
-    backgroundColor: "red",
     borderRadius: 10,
     paddingHorizontal: 5,
     minWidth: 18,

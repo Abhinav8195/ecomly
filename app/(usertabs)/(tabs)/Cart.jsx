@@ -83,7 +83,7 @@ const toggleSelectItem = (id, color, size) => {
           transition={{ type: 'timing', duration: 600, easing: Easing.out(Easing.exp) }}
           style={{ marginBottom: 20 }}
         >
-          <Ionicons name="cart-outline" size={100} color={colors.primary} />
+          <Ionicons name="cart-outline" size={100} color={colors.light.redPrimary} />
         </MotiView>
 
         <MotiView
@@ -99,7 +99,7 @@ const toggleSelectItem = (id, color, size) => {
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'timing', duration: 500, delay: 200 }}
         >
-          <Text style={[styles.subtitle, { color:  theme.textSecondary }]}>
+          <Text style={[styles.subtitle, { color:  colors.light.redPrimary }]}>
             Looks like you haven't added any items yet.
           </Text>
         </MotiView>
@@ -110,7 +110,7 @@ const toggleSelectItem = (id, color, size) => {
           transition={{ type: 'spring', damping: 10, stiffness: 120, delay: 300 }}
         >
           <TouchableOpacity
-            style={styles.button}
+            style={[styles.button,{backgroundColor:colors.light.redPrimary}]}
             onPress={() => router.push('/(usertabs)/(tabs)/Home')}
           >
             <Text style={styles.buttonText}>Start Shopping</Text>
@@ -126,7 +126,7 @@ const toggleSelectItem = (id, color, size) => {
       <View style={styles.header}>
         <View>
           <Text style={[styles.headerText, { color: theme.textPrimary }]}>My Cart</Text>
-          <Text style={[styles.totalItems, { color: theme.textSecondary }]}>
+          <Text style={[styles.totalItems, { color:isDark?colors.light.redPrimary: theme.textSecondary }]}>
             Total items: {cart.length}
           </Text>
         </View>
@@ -153,7 +153,7 @@ const toggleSelectItem = (id, color, size) => {
               stiffness: 120,
               delay: index * 100,
             }}
-            style={[styles.cartItem, { backgroundColor: isDark ? "#1F1F2F" : "#F6F6F9" }]}
+            style={[styles.cartItem, { backgroundColor: isDark ? "#1A1A1A" : "#F6F6F9" }]}
           >
            <Image
             source={productImages[item.imageKey] || item.image} 
@@ -162,7 +162,7 @@ const toggleSelectItem = (id, color, size) => {
 
             <View style={styles.details}>
   <Text style={[styles.name, { color: theme.textPrimary }]}>{item.name}</Text>
-  <Text style={[styles.price, { color: colors.primary }]}>
+  <Text style={[styles.price, { color: colors.light.redPrimary }]}>
     ${Number(item.price.replace("$", ""))?.toFixed(2)}
   </Text>
 
@@ -191,7 +191,7 @@ const toggleSelectItem = (id, color, size) => {
       onPress={() => dispatch(decrementQuantity(item))}
       style={[
         styles.qtyButton,
-        { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary },
+        { backgroundColor: colors.light.redPrimary },
       ]}
     >
       <Ionicons name="remove" size={16} color={'white'} />
@@ -203,7 +203,7 @@ const toggleSelectItem = (id, color, size) => {
       onPress={() => dispatch(incrementQuantity(item))}
       style={[
         styles.qtyButton,
-        { backgroundColor: isDark ? colors.dark.textSecondary : colors.primary },
+        { backgroundColor: colors.light.redPrimary },
       ]}
     >
       <Ionicons name="add" size={16} color={"white"} />
@@ -242,7 +242,7 @@ const toggleSelectItem = (id, color, size) => {
       </ScrollView>
 
       {/* Bottom Summary */}
-      <View style={[styles.bottomCard, { backgroundColor: isDark ? "#1C1B29" : "#F6F6F9" }]}>
+      <View style={[styles.bottomCard, { backgroundColor: isDark ? "#1A1A1A" : "#F6F6F9" }]}>
         <View style={styles.summaryRow}>
           <Text style={[styles.summaryText, { color: theme.textSecondary }]}>Sub Total</Text>
           <Text style={[styles.summaryValue, { color: theme.textPrimary }]}>${subtotal.toFixed(2)}</Text>
@@ -255,11 +255,11 @@ const toggleSelectItem = (id, color, size) => {
 
         <View style={[styles.summaryRow, { marginVertical: 8 }]}>
           <Text style={[styles.totalText, { color: theme.textPrimary }]}>Total</Text>
-          <Text style={[styles.totalValue, { color: colors.primary }]}>${total.toFixed(2)}</Text>
+          <Text style={[styles.totalValue, { color: colors.warning }]}>${total.toFixed(2)}</Text>
         </View>
 
         <TouchableOpacity
-          style={styles.checkoutButton}
+          style={[styles.checkoutButton,{backgroundColor:colors.light.redPrimary}]}
           onPress={() => Toast.show({ type: "success", text1: "Proceeding to checkout..." })}
         >
           <Text style={styles.checkoutText}>Checkout</Text>
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   button: {
-    backgroundColor: '#524EB7',
+    
     paddingVertical: 14,
     paddingHorizontal: 30,
     borderRadius: 14,

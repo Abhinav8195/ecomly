@@ -1,4 +1,3 @@
-// components/OfferCarousel.js
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, useColorScheme } from "react-native";
 import { MotiView, AnimatePresence } from "moti";
@@ -34,6 +33,14 @@ const OfferCarousel = () => {
 
   const currentOffer = offersData[currentIndex];
 
+  // Determine red theme colors based on light/dark mode
+  const bgColor = isDark ? colors.dark.redCard : colors.light.redPrimary;
+  const titleColor = isDark ? colors.dark.redTextSecondary : colors.light.redSecondary;
+  const offerColor = isDark ? colors.dark.redTextPrimary : "#FFF";
+  const codeColor = isDark ? colors.dark.redTextSecondary : '#fff';
+  const buttonBg = isDark ? colors.dark.redTextPrimary : "#FFF"; 
+const buttonText = isDark ? "red" : colors.light.redPrimary;
+
   return (
     <AnimatePresence exitBeforeEnter>
       <MotiView
@@ -42,47 +49,28 @@ const OfferCarousel = () => {
         animate={{ opacity: 1, translateX: 0 }}
         exit={{ opacity: 0, translateX: -100 }}
         transition={{ type: "timing", duration: 500, easing: Easing.inOut(Easing.ease) }}
-        style={[styles.card, { backgroundColor: colors.primary }]}
+        style={[styles.card, { backgroundColor: bgColor }]}
       >
         <View>
-          <Text
-            style={[
-              styles.offerTitle,
-              { color:  "#D0CEFF", fontFamily: "Switzer-Bold" },
-            ]}
-          >
+          <Text style={[styles.offerTitle, { color: titleColor, fontFamily: "Switzer-Bold" }]}>
             {currentOffer.title}
           </Text>
-          <Text
-            style={[
-              styles.offerText,
-              { color: "#FFF", fontFamily: "Switzer-Extrabold" },
-            ]}
-          >
+          <Text style={[styles.offerText, { color: offerColor, fontFamily: "Switzer-Extrabold" }]}>
             {currentOffer.offer}
           </Text>
-          <Text
-            style={[
-              styles.offerCode,
-              { color: isDark ? "#EEE" : "#D0CEFF", fontFamily: "Switzer-Bold" },
-            ]}
-          >
+          <Text style={[styles.offerCode, { color: codeColor, fontFamily: "Switzer-Bold" }]}>
             {currentOffer.code}
           </Text>
         </View>
+
         <TouchableOpacity
-          style={[styles.getNowButton, { backgroundColor: "#FFF" }]}
-          onPress={() => console.log("Offer clicked", currentOffer.offer)}
-        >
-          <Text
-            style={[
-              styles.getNowText,
-              { color: colors.primary, fontFamily: "Switzer-Bold" },
-            ]}
-          >
-            Get it now
-          </Text>
-        </TouchableOpacity>
+  style={[styles.getNowButton, { backgroundColor: buttonBg }]}
+  onPress={() => console.log("Offer clicked", currentOffer.offer)}
+>
+  <Text style={[styles.getNowText, { color: buttonText, fontFamily: "Switzer-Bold" }]}>
+    Get it now
+  </Text>
+</TouchableOpacity>
       </MotiView>
     </AnimatePresence>
   );
@@ -105,7 +93,7 @@ const styles = StyleSheet.create({
   },
   offerTitle: {
     fontSize: 14,
-    opacity: 0.8,
+    opacity: 0.9,
   },
   offerText: {
     fontSize: 24,

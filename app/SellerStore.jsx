@@ -62,11 +62,11 @@ const SellerStore = () => {
           <Text style={[styles.storeName, { color: theme.textPrimary }]}>
             {shopName}
           </Text>
-          <Text style={[styles.followers, { color: theme.textSecondary }]}>
+          <Text style={[styles.followers, { color: 'gray' }]}>
             327 Followers
           </Text>
           <View style={styles.feedbackRow}>
-            <Text style={[styles.feedback, { color: theme.textSecondary }]}>
+            <Text style={[styles.feedback, { color: 'gray' }]}>
               97% Positive Feedback
             </Text>
             <TouchableOpacity
@@ -98,7 +98,7 @@ const SellerStore = () => {
     <TouchableOpacity
       style={[
         styles.tabBtn,
-        activeTab === "Home" && { borderBottomColor: colors.primary, borderBottomWidth: 2 },
+        activeTab === "Home" && { borderBottomColor: colors.light.redPrimary, borderBottomWidth: 2 },
       ]}
       onPress={() => setActiveTab("Home")}
     >
@@ -107,7 +107,7 @@ const SellerStore = () => {
     <TouchableOpacity
       style={[
         styles.tabBtn,
-        activeTab === "About" && { borderBottomColor: colors.primary, borderBottomWidth: 2 },
+        activeTab === "About" && { borderBottomColor: colors.light.redPrimary, borderBottomWidth: 2 },
       ]}
       onPress={() => setActiveTab("About")}
     >
@@ -115,8 +115,8 @@ const SellerStore = () => {
     </TouchableOpacity>
   </View>
 
-  <TouchableOpacity style={[styles.chatBtn, { borderColor: scheme === "dark" ? colors.dark.textSecondary : colors.primary }]}>
-    <Text style={[styles.chatText, { color: colors.primary }]}>Chat Now</Text>
+  <TouchableOpacity style={[styles.chatBtn, { borderColor: colors.light.redPrimary }]}>
+    <Text style={[styles.chatText, { color: colors.light.redPrimary }]}>Chat Now</Text>
   </TouchableOpacity>
 </View>
 

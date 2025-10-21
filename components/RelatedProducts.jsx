@@ -13,7 +13,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { MotiView } from "moti";
 import colors from "../theme/colors";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import products from "../data";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart,incrementQuantity,decrementQuantity } from "../redux/CartReducer";
+import * as Haptics from "expo-haptics";
+import { addToWishlist, removeFromWishlist } from "../redux/WishListReducer";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 16 * 3) / 2; 
@@ -21,7 +26,52 @@ const CARD_WIDTH = (width - 16 * 3) / 2;
 const RelatedProducts = () => {
   const scheme = useColorScheme();
   const isDark = scheme === "dark";
+const dispatch = useDispatch();
+
+  const wishlist = useSelector((state) => state.wishlist.wishlist);
+  const cart = useSelector((state) => state.cart.cart);
   const theme = isDark ? colors.dark : colors.light;
+
+
+  const handleAddToCart = (item) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  
+      const payloadItem = {
+        ...item,
+        quantity: 1,
+        selectedColor: item.colors[0],
+        selectedSize: item.sizes[0],
+      };
+  
+      dispatch(addToCart(payloadItem));
+      Toast.show({
+        type: "success",
+        text1: `${item.name} added to cart!`,
+      });
+    };
+  
+   const toggleWishlist = (item) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  
+    const normalizedItem = { ...item, id: String(item.id) };
+    const isLiked = wishlist.some((i) => i.id === normalizedItem.id);
+  
+    if (isLiked) {
+      dispatch(removeFromWishlist(normalizedItem));
+      Toast.show({
+        type: "info",
+        text1: `${item.name} removed from wishlist`,
+      });
+    } else {
+      dispatch(addToWishlist(normalizedItem));
+      Toast.show({
+        type: "success",
+        text1: `${item.name} added to wishlist`,
+      });
+    }
+  };
+  
+
 
   return (
     <View style={styles.container}>
@@ -34,7 +84,14 @@ const RelatedProducts = () => {
         numColumns={2}
         keyExtractor={(item) => item.id.toString()}
         columnWrapperStyle={{ justifyContent:"space-around",gap:10 ,marginBottom: 16 }}
-        renderItem={({ item, index }) => (
+     renderItem={({ item, index }) => {
+    // Move this inside the renderItem function, BEFORE return
+    const existingCartItem = cart.find(
+      (i) => String(i.id) === String(item.id)
+    );
+    const quantity = existingCartItem ? existingCartItem.quantity : 0;
+
+    return (
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -89,30 +146,117 @@ const RelatedProducts = () => {
                 </View>
 
                 <View style={styles.ratingRow}>
-                  <Ionicons name="star" size={14} color="#FFC107" />
-                  <Text style={[styles.ratingText, { color: isDark ? "#fff" : "#000" }]}>
-                    {item.rating}
-                  </Text>
-                  <TouchableOpacity
-                    style={[
-                      styles.cartIcon,
-                      { backgroundColor: isDark ? colors.dark.textSecondary : "#F1EEFF" },
-                    ]}
-                  >
-                    <Ionicons
-                      name="cart-outline"
-                      size={16}
-                      color={isDark ? colors.dark.textPrimary : colors.primary}
-                    />
-                  </TouchableOpacity>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <Ionicons name="star" size={14} color="#FFC107" />
+                                        <Text style={[styles.ratingText, { color: isDark ? "#fff" : "#000" }]}>{item.rating}</Text>
+                                      </View>
+                  <View>
+  {existingCartItem ? (
+    <MotiView
+      key="quantity"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+      style={styles.quantityContainer}
+    >
+      <TouchableOpacity
+        onPress={() =>
+          dispatch(
+            decrementQuantity({
+              ...item,
+              selectedColor: item.colors[0],
+              selectedSize: item.sizes[0],
+            })
+          )
+        }
+        style={[
+          styles.qtyButton,
+          {
+            backgroundColor:  colors.light.redPrimary,
+          },
+        ]}
+      >
+        <Ionicons
+          name="remove"
+          size={14}
+          color={isDark ? colors.dark.redTextPrimary : 'white'}
+        />
+      </TouchableOpacity>
+
+      <MotiView
+        from={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 200 }}
+      >
+        <Text
+          style={{
+            color: isDark ? colors.dark.redTextPrimary : colors.light.redPrimary,
+            ...styles.qtyText,
+          }}
+        >
+          {quantity}
+        </Text>
+      </MotiView>
+
+      <TouchableOpacity
+        onPress={() =>
+          dispatch(
+            incrementQuantity({
+              ...item,
+              selectedColor: item.colors[0],
+              selectedSize: item.sizes[0],
+            })
+          )
+        }
+        style={[
+          styles.qtyButton,
+          {
+            backgroundColor: colors.light.redPrimary,
+          },
+        ]}
+      >
+        <Ionicons
+          name="add"
+          size={14}
+          color={ 'white'}
+        />
+      </TouchableOpacity>
+    </MotiView>
+  ) : (
+    <MotiView
+      key="cart"
+      from={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: "timing", duration: 200 }}
+    >
+      <TouchableOpacity
+        onPress={() => handleAddToCart(item)}
+        style={[
+          styles.cartIcon,
+          {
+            backgroundColor: colors.light.redPrimary,
+          },
+        ]}
+      >
+        <Ionicons
+          name="cart-outline"
+          size={16}
+          color={'white'}
+        />
+      </TouchableOpacity>
+    </MotiView>
+  )}
+</View>
+
                 </View>
               </View>
             </TouchableOpacity>
           </MotiView>
-        )}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 16 }}
-      />
+    );
+  }}
+  showsVerticalScrollIndicator={false}
+  contentContainerStyle={{ paddingBottom: 16 }}
+/>
     </View>
   );
 };
@@ -148,7 +292,29 @@ const styles = StyleSheet.create({
   productPrice: { fontSize: 14, fontWeight: "700", marginTop: 2 },
   colorsRow: { flexDirection: "row", marginTop: 6 },
   dot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-  ratingRow: { flexDirection: "row", alignItems: "center", marginTop: 8 },
+  ratingRow: { flexDirection: "row", alignItems: "center", marginTop: 8,  justifyContent: "space-between", },
   ratingText: { fontSize: 13, fontWeight: "500", marginLeft: 4 },
-  cartIcon: { marginLeft: "auto", padding: 6, borderRadius: 8 },
+  cartIcon: {
+    marginLeft: "auto",
+    padding: 6,
+    borderRadius: 8,
+  },quantityContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginLeft: "auto",
+  minWidth: 90, 
+  justifyContent: "space-between",
+},
+qtyButton: {
+  paddingHorizontal: 6,
+  paddingVertical: 4,
+  borderRadius: 6,
+  marginHorizontal: 4,
+},
+qtyText: {
+  fontSize: 14,
+  fontWeight: "600",
+  minWidth: 20,
+  textAlign: "center",
+},
 });

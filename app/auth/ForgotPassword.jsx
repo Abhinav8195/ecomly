@@ -81,7 +81,7 @@ const ForgotPassword = () => {
         <Text style={[styles.title, { color: theme.textPrimary }]}>
           Forgot Password
         </Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+        <Text style={[styles.subtitle, { color: isDark?'gray':theme.textSecondary }]}>
           Please enter the email address associated{"\n"}with your account
         </Text>
 
@@ -97,7 +97,7 @@ const ForgotPassword = () => {
             },
           ]}
           placeholder="info@onixlab.net"
-          placeholderTextColor={theme.textSecondary}
+          placeholderTextColor={isDark?colors.light.background:theme.textSecondary}
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -111,7 +111,7 @@ const ForgotPassword = () => {
           transition={{ type: "timing", duration: 600, delay: 200 }}
         >
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.primary }]}
+            style={[styles.button, { backgroundColor:colors.light.redPrimary }]}
             onPress={handleContinue}
             activeOpacity={0.8}
           >

@@ -34,23 +34,57 @@ const Home = () => {
       contentContainerStyle={{ paddingBottom: 90 }}
     >
       <View style={[styles.header]}>
-        <MotiView from={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 12, stiffness: 130 }}>
-          <TouchableOpacity onPress={()=>navigation.openDrawer()} style={[styles.menuButton]}>
-            <Ionicons name="menu-outline" size={24} color={isDark ? colors.dark.textPrimary : colors.primary} />
-          </TouchableOpacity>
-        </MotiView>
+  
+  <MotiView
+    from={{ scale: 0.8 }}
+    animate={{ scale: 1 }}
+    transition={{ type: "spring", damping: 12, stiffness: 130 }}
+  >
+    <TouchableOpacity onPress={() => navigation.openDrawer()} style={[styles.menuButton]}>
+      <Ionicons
+        name="menu-outline"
+        size={24}
+        color={colors.light.redPrimary} 
+      />
+    </TouchableOpacity>
+  </MotiView>
 
-        <View style={styles.logoContainer}>
-          <Text style={[styles.logoText1, { color: isDark ? colors.dark.textSecondary : colors.primary }]}>Ecom</Text>
-          <Text style={[styles.logoText2]}>ly</Text>
-        </View>
 
-        <MotiView from={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 12, stiffness: 130 }}>
-          <TouchableOpacity onPress={()=>router.push('/Notification')} style={[styles.notificationButton]}>
-            <Ionicons name="notifications-outline" size={22} color={isDark ? colors.dark.textPrimary : colors.primary} />
-          </TouchableOpacity>
-        </MotiView>
-      </View>
+  <View style={styles.logoContainer}>
+    <Text
+      style={[
+        styles.logoText1,
+        { color: colors.light.redPrimary},
+      ]}
+    >
+      Baj
+    </Text>
+    <Text
+      style={[
+        styles.logoText2,
+        { color: isDark ? "#FFF" : "#222" }, 
+      ]}
+    >
+      Go
+    </Text>
+  </View>
+
+  
+  <MotiView
+    from={{ scale: 0.8 }}
+    animate={{ scale: 1 }}
+    transition={{ type: "spring", damping: 12, stiffness: 130 }}
+  >
+    <TouchableOpacity onPress={() => router.push("/Notification")} style={[styles.notificationButton]}>
+      <Ionicons
+        name="notifications-outline"
+        size={22}
+        color={colors.light.redPrimary} 
+      />
+    </TouchableOpacity>
+  </MotiView>
+</View>
+
 
      <SearchBar
           onResults={(results, text) => {
